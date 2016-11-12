@@ -12,6 +12,7 @@ using ClosedXML.Excel;
 using System.IO;
 using LumenWorks.Framework.IO.Csv;
 using System.Collections;
+using System.Globalization;
 
 namespace GUI_SecChecker_v2
 {
@@ -22,16 +23,19 @@ namespace GUI_SecChecker_v2
         string [] listDomain;
 
         ///////////////////////////////////Переменные для Исходные Данные/////////////////
-        DataTable tblWithCompAD;
+        DataTable tblWithADReport;
         DataTable tblWithMPReport;
         DataTable tblWithKSCReport;
         DataTable tblWithSEPReport;
         DataTable tblWithSCCMReport;
 
+        TimeSpan daySpan30 = new TimeSpan(30, 0, 0, 0);
+
         ///////////////////////////////////Переменые для Обработанных Данных/////////////////
         DataTable tblWithCleanMPReport;
+        DataTable tblWithCleanADReport;
 
-        
+
 
         public Form1()
         {
@@ -291,6 +295,8 @@ namespace GUI_SecChecker_v2
 
         ////////////////////////////////////////////////////////////////////////////////ОБРАБОТКА DataTable\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+        ////////////////////////////////////////////////////////////////////////////////ОБРАБОТКА DataTable Общие Методы\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\    
+
         /// <summary>
         /// Удаление дубликатов из DataTable
         /// </summary>
@@ -318,6 +324,27 @@ namespace GUI_SecChecker_v2
         }
 
         /// <summary>
+        /// Удаление строк из DataTable содержащих в определенном столбце определенное слово 
+        /// </summary>
+        public DataTable RemoveRowsContainsSpecificWordInColumn(DataTable dt, string colName, string searchWord)
+        {
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                if (dt.Rows[i][colName].ToString().Contains(searchWord))
+                {
+                    dt.Rows[i].Delete();
+                }
+
+            }
+            dt.AcceptChanges();
+
+            return dt;
+        }
+
+
+        ////////////////////////////////////////////////////////////////////////ОБРАБОТКА DataTable MP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        /// <summary>
         /// Удаление строк с пустыми именами из отчета MP
         /// </summary>
         public DataTable RemoveRowsWithEmptyNameFromMPReport(DataTable dt)
@@ -339,14 +366,32 @@ namespace GUI_SecChecker_v2
             return dt;
         }
 
+    
         /// <summary>
-        /// Удаление строк из отчета MP содержащих домен Omega
+        /// Удаление дубликатов и строк с пустыми именами  и с доменом omega из отчета MP
         /// </summary>
-        public DataTable RemoveRowsWithDomainOmegaFromMPReport(DataTable dt)
+        private DataTable RemoveDuplicateAndRowsWithEmptyNameFromMPReport()
         {
+            DataTable _tblWithCleanMPReport = new DataTable();
+            _tblWithCleanMPReport = tblWithMPReport.Copy();
+            _tblWithCleanMPReport = RemoveRowsWithEmptyNameFromMPReport(_tblWithCleanMPReport);
+            _tblWithCleanMPReport = RemoveDuplicateRows(_tblWithCleanMPReport, "MP_Name");
+            _tblWithCleanMPReport = RemoveDuplicateRows(_tblWithCleanMPReport, "MP_NameFull");
+            _tblWithCleanMPReport = RemoveRowsContainsSpecificWordInColumn(_tblWithCleanMPReport, "MP_NameFull", "omega");
+            return _tblWithCleanMPReport;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////ОБРАБОТКА DataTable AD\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        /// <summary>
+        /// Удаление записей с LastLogon старше 30 дней
+        /// </summary>
+        public DataTable RemoveRowsOldLastLogonFromADReport(DataTable dt, string colName, TimeSpan daySpan)
+        {
+            
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                if (dt.Rows[i]["MP_NameFull"].ToString().Contains("omega"))
+                if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString(), "yyyy.MM.dd HH.mm", CultureInfo.InvariantCulture) > daySpan)
                 {
                     dt.Rows[i].Delete();
                 }
@@ -358,16 +403,18 @@ namespace GUI_SecChecker_v2
         }
 
         /// <summary>
-        /// Удаление дубликатов и строк с пустыми именами  и с доменом omega из отчета MP
+        /// Удаление дубликтов, Disable, LastLogon из AD
         /// </summary>
-        private void RemoveDuplicateAndRowsWithEmptyNameFromMPReport()
+        private DataTable RemoveDuplicateAndDisableAndOldLastLogonFromADReport()
         {
-            tblWithCleanMPReport = new DataTable();
-            tblWithCleanMPReport = tblWithMPReport.Copy();
-            tblWithCleanMPReport = RemoveRowsWithEmptyNameFromMPReport(tblWithCleanMPReport);
-            tblWithCleanMPReport = RemoveDuplicateRows(tblWithCleanMPReport, "MP_Name");
-            tblWithCleanMPReport = RemoveDuplicateRows(tblWithCleanMPReport, "MP_NameFull");
-            tblWithCleanMPReport = RemoveRowsWithDomainOmegaFromMPReport(tblWithCleanMPReport);
+            DataTable _tblWithCleanADReport = new DataTable();
+            _tblWithCleanADReport = tblWithADReport.Copy();
+            _tblWithCleanADReport = RemoveDuplicateRows(_tblWithCleanADReport, "name");
+            _tblWithCleanADReport = RemoveRowsContainsSpecificWordInColumn(_tblWithCleanADReport, "Disabled", "True");            
+            _tblWithCleanADReport = RemoveRowsOldLastLogonFromADReport(_tblWithCleanADReport, "LastLogonTimeStamp", daySpan30);
+
+
+            return _tblWithCleanADReport;            
         }
 
         ////////////////////////////////////////////////////////////////////////////////ОБРАБОТКА КНОПОК\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -376,10 +423,16 @@ namespace GUI_SecChecker_v2
         private void bt_GetDataAD_Click(object sender, EventArgs e)
         {
             listDomain = tb_domain.Text.Split(';');
-            tblWithCompAD = GetComputersFromMultipleDomains(listDomain);
+            tblWithADReport = GetComputersFromMultipleDomains(listDomain);
 
             MessageBox.Show("AD Done!");
 
+        }
+
+        //////// Кнопка Тест удаления мусора из отчета AD
+        private void bt_RemoveTrashFromAD_Click(object sender, EventArgs e)
+        {
+            tblWithCleanADReport = RemoveDuplicateAndDisableAndOldLastLogonFromADReport().Copy();
         }
 
 
@@ -406,7 +459,7 @@ namespace GUI_SecChecker_v2
         //////// Кнопка Тест удаления мусора из отчета MP
         private void bt_RemoveTrashFromMP_Click(object sender, EventArgs e)
         {
-            RemoveDuplicateAndRowsWithEmptyNameFromMPReport();
+            tblWithCleanADReport = RemoveDuplicateAndRowsWithEmptyNameFromMPReport().Copy();
         }
 
 
@@ -471,15 +524,5 @@ namespace GUI_SecChecker_v2
         }
 
 
-
-        //////// Кнопка Тестирование удаления дубликатов в DataTable
-        private void bt_DelDuplicate_Click(object sender, EventArgs e)
-        {
-            DataTable tblWhithDuplicateRows = new DataTable();
-            tblWhithDuplicateRows = ReadCSVWithHeadersToDataTable(tb_PathSCCMReport.Text, ',');
-            DataTable tblWithUniqueRows = new DataTable();
-            tblWithUniqueRows = tblWhithDuplicateRows.Copy();
-            tblWithUniqueRows = RemoveDuplicateRows(tblWithUniqueRows, "Name0");
-        }
     }
 }

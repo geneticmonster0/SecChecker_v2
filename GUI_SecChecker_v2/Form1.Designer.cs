@@ -59,10 +59,10 @@
             this.tb_PathSCCMReport = new System.Windows.Forms.TextBox();
             this.bt_BrowseSCCMReport = new System.Windows.Forms.Button();
             this.bt_ReadSCCMReport = new System.Windows.Forms.Button();
-            this.bt_DelDuplicate = new System.Windows.Forms.Button();
             this.bt_RemoveTrashFromMP = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
+            this.bt_RemoveTrashFromAD = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label4
@@ -105,7 +105,7 @@
             // 
             this.tb_instruction.Location = new System.Drawing.Point(12, 41);
             this.tb_instruction.Name = "tb_instruction";
-            this.tb_instruction.Size = new System.Drawing.Size(221, 158);
+            this.tb_instruction.Size = new System.Drawing.Size(185, 158);
             this.tb_instruction.TabIndex = 8;
             this.tb_instruction.Text = "1) Create C:\\Temp\\\n2) Execute Set-ExecutionPolicy Unrestricted\n\n";
             // 
@@ -341,16 +341,6 @@
             this.bt_ReadSCCMReport.UseVisualStyleBackColor = true;
             this.bt_ReadSCCMReport.Click += new System.EventHandler(this.bt_ReadSCCMReport_Click);
             // 
-            // bt_DelDuplicate
-            // 
-            this.bt_DelDuplicate.Location = new System.Drawing.Point(827, 487);
-            this.bt_DelDuplicate.Name = "bt_DelDuplicate";
-            this.bt_DelDuplicate.Size = new System.Drawing.Size(83, 45);
-            this.bt_DelDuplicate.TabIndex = 16;
-            this.bt_DelDuplicate.Text = "Del Duplicate";
-            this.bt_DelDuplicate.UseVisualStyleBackColor = true;
-            this.bt_DelDuplicate.Click += new System.EventHandler(this.bt_DelDuplicate_Click);
-            // 
             // bt_RemoveTrashFromMP
             // 
             this.bt_RemoveTrashFromMP.Location = new System.Drawing.Point(15, 712);
@@ -379,13 +369,22 @@
             this.label16.TabIndex = 12;
             this.label16.Text = "Указывать через ;";
             // 
+            // bt_RemoveTrashFromAD
+            // 
+            this.bt_RemoveTrashFromAD.Location = new System.Drawing.Point(122, 712);
+            this.bt_RemoveTrashFromAD.Name = "bt_RemoveTrashFromAD";
+            this.bt_RemoveTrashFromAD.Size = new System.Drawing.Size(75, 56);
+            this.bt_RemoveTrashFromAD.TabIndex = 16;
+            this.bt_RemoveTrashFromAD.Text = "2) Remove trash from AD";
+            this.bt_RemoveTrashFromAD.UseVisualStyleBackColor = true;
+            this.bt_RemoveTrashFromAD.Click += new System.EventHandler(this.bt_RemoveTrashFromAD_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1219, 882);
             this.Controls.Add(this.bt_ReadSCCMReport);
-            this.Controls.Add(this.bt_DelDuplicate);
             this.Controls.Add(this.bt_BrowseSCCMReport);
             this.Controls.Add(this.bt_ReadSEPReport);
             this.Controls.Add(this.bt_BrowseSEPReport);
@@ -397,6 +396,7 @@
             this.Controls.Add(this.label14);
             this.Controls.Add(this.tb_PathKSCReport);
             this.Controls.Add(this.label12);
+            this.Controls.Add(this.bt_RemoveTrashFromAD);
             this.Controls.Add(this.bt_RemoveTrashFromMP);
             this.Controls.Add(this.bt_BrowseMPReport);
             this.Controls.Add(this.label13);
@@ -459,10 +459,10 @@
         private System.Windows.Forms.TextBox tb_PathSCCMReport;
         private System.Windows.Forms.Button bt_BrowseSCCMReport;
         private System.Windows.Forms.Button bt_ReadSCCMReport;
-        private System.Windows.Forms.Button bt_DelDuplicate;
         private System.Windows.Forms.Button bt_RemoveTrashFromMP;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Button bt_RemoveTrashFromAD;
     }
 }
 

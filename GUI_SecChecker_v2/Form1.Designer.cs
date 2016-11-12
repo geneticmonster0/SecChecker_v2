@@ -115,7 +115,7 @@
             this.tb_pass.Name = "tb_pass";
             this.tb_pass.Size = new System.Drawing.Size(100, 20);
             this.tb_pass.TabIndex = 5;
-            this.tb_pass.Text = "VS1997vs";
+            this.tb_pass.Text = "Symc4now!";
             // 
             // tb_domain
             // 
@@ -123,7 +123,7 @@
             this.tb_domain.Name = "tb_domain";
             this.tb_domain.Size = new System.Drawing.Size(100, 20);
             this.tb_domain.TabIndex = 6;
-            this.tb_domain.Text = "szbsbrf";
+            this.tb_domain.Text = "example;example";
             // 
             // tb_login
             // 
@@ -131,7 +131,7 @@
             this.tb_login.Name = "tb_login";
             this.tb_login.Size = new System.Drawing.Size(100, 20);
             this.tb_login.TabIndex = 7;
-            this.tb_login.Text = "KartashevVS";
+            this.tb_login.Text = "administrator";
             // 
             // bt_GetDataAD
             // 

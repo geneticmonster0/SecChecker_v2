@@ -40,121 +40,27 @@ namespace GUI_SecChecker_v2
 
 
 
+        ////////////////////////////////////////////////////////////////////////////////Чтение данных из AD\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
         /// <summary>
         /// Получение данных из нескольких доменов
         /// </summary>
-        private void GetComputersFromMultipleDomains(string[] _listDomain)
+        private DataTable GetComputersFromMultipleDomains(string[] _listDomain)
         {
 
             DataTable adComp = new DataTable();
-            tblWithCompAD = new DataTable();
+            DataTable _tblWithCompAD = new DataTable();
 
             for (int i = 0; i < _listDomain.Length; i++)
             {
                 adComp = new DataTable();
                 adComp = GetComputers(_listDomain[i], tb_login.Text, tb_pass.Text);
-                tblWithCompAD.Merge(adComp);
-            }
-        }
-
-
-
-
-        /// <summary>
-        /// Объединение всех CSV в указанной папке в один файл с именем папки
-        /// </summary>
-        public string MergeCSVInFolder(string pathToCSV)
-        {
-            string mergeFilePath = pathToCSV + "\\" + pathToCSV.Substring(pathToCSV.LastIndexOf(@"\") + 1) + ".csv";
-            string mergeFileName = pathToCSV.Substring(pathToCSV.LastIndexOf(@"\") + 1) + ".csv";
-
-            var dirInfo = new DirectoryInfo(pathToCSV);
-
-            foreach (var file in dirInfo.EnumerateFiles("*.csv", SearchOption.TopDirectoryOnly))
-            {
-                //var fileLines = File.ReadAllLines(file.FullName, Encoding.GetEncoding("UTF-8"));
-                var fileLines = File.ReadAllLines(file.FullName);
-                File.AppendAllLines(mergeFilePath, fileLines);
+                _tblWithCompAD.Merge(adComp);
             }
 
-            return mergeFilePath;
+            return _tblWithCompAD;
         }
 
-        /// <summary>
-        /// Чтение CSV Отчета MP в DataTable
-        /// </summary>
-        public DataTable ReadMPReportToDataTable(string mpReportFilepath)
-        {
-            DataTable tblCsvMPReport = new DataTable();
-            using (CsvReader csv =
-                       new CsvReader(new StreamReader(mpReportFilepath), false, ';'))
-            {
-                string[] headers = csv.GetFieldHeaders();
-                
-
-                tblCsvMPReport.Clear();
-                tblCsvMPReport.Columns.Add("MP_IP1");
-                tblCsvMPReport.Columns.Add("MP_IP2");
-                tblCsvMPReport.Columns.Add("MP_Name");
-                tblCsvMPReport.Columns.Add("MP_NameFull");
-                tblCsvMPReport.Columns.Add("MP_OS");
-
-
-
-                while (csv.ReadNextRecord())
-                {
-                    DataRow _rowCsv = tblCsvMPReport.NewRow();
-                    try
-                    {
-                        _rowCsv["MP_IP1"] = csv[0];
-                    }
-                    catch
-                    {
-                        _rowCsv["MP_IP1"] = "null";
-                    }
-
-                    try
-                    {
-                        _rowCsv["MP_IP2"] = csv[1];
-                    }
-                    catch
-                    {
-                        _rowCsv["MP_IP2"] = "null";
-                    }
-                    try
-                    {
-                        _rowCsv["MP_Name"] = csv[2];
-                    }
-                    catch
-                    {
-                        _rowCsv["MP_Name"] = "null";
-                    }
-
-                    try
-                    {
-                        _rowCsv["MP_NameFull"] = csv[3];
-                    }
-                    catch
-                    {
-                        _rowCsv["MP_NameFull"] = "null";
-                    }
-
-                    try
-                    {
-                        _rowCsv["MP_OS"] = csv[4];
-                    }
-                    catch
-                    {
-                        _rowCsv["MP_OS"] = "null";
-                    }
-                    tblCsvMPReport.Rows.Add(_rowCsv);
-
-
-                }
-            }
-
-            return tblCsvMPReport;
-        }
 
         /// <summary>
         /// Получить ПК из AD в DataTable
@@ -250,8 +156,12 @@ namespace GUI_SecChecker_v2
             return tblWithADComp;
         }
 
+
+
+        ////////////////////////////////////////////////////////////////////////////////Чтение и обработка CSV\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
         /// <summary>
-        /// Чтение CSV Отчета KSC в DataTable
+        /// Чтение CSV Отчета с заголовками в DataTable
         /// </summary>
         public DataTable ReadCSVWithHeadersToDataTable(string CSVWithHeadersFilepath, char delimiter)
         {
@@ -277,7 +187,109 @@ namespace GUI_SecChecker_v2
             return tblCsvKSCReport;
         }
 
+        /// <summary>
+        /// Чтение CSV Отчета MP в DataTable
+        /// </summary>
+        public DataTable ReadMPReportToDataTable(string mpReportFilepath)
+        {
+            DataTable tblCsvMPReport = new DataTable();
+            using (CsvReader csv =
+                       new CsvReader(new StreamReader(mpReportFilepath), false, ';'))
+            {
+                string[] headers = csv.GetFieldHeaders();
 
+
+                tblCsvMPReport.Clear();
+                tblCsvMPReport.Columns.Add("MP_IP1");
+                tblCsvMPReport.Columns.Add("MP_IP2");
+                tblCsvMPReport.Columns.Add("MP_Name");
+                tblCsvMPReport.Columns.Add("MP_NameFull");
+                tblCsvMPReport.Columns.Add("MP_OS");
+
+
+
+                while (csv.ReadNextRecord())
+                {
+                    DataRow _rowCsv = tblCsvMPReport.NewRow();
+                    try
+                    {
+                        _rowCsv["MP_IP1"] = csv[0];
+                    }
+                    catch
+                    {
+                        _rowCsv["MP_IP1"] = "null";
+                    }
+
+                    try
+                    {
+                        _rowCsv["MP_IP2"] = csv[1];
+                    }
+                    catch
+                    {
+                        _rowCsv["MP_IP2"] = "null";
+                    }
+                    try
+                    {
+                        _rowCsv["MP_Name"] = csv[2];
+                    }
+                    catch
+                    {
+                        _rowCsv["MP_Name"] = "null";
+                    }
+
+                    try
+                    {
+                        _rowCsv["MP_NameFull"] = csv[3];
+                    }
+                    catch
+                    {
+                        _rowCsv["MP_NameFull"] = "null";
+                    }
+
+                    try
+                    {
+                        _rowCsv["MP_OS"] = csv[4];
+                    }
+                    catch
+                    {
+                        _rowCsv["MP_OS"] = "null";
+                    }
+                    tblCsvMPReport.Rows.Add(_rowCsv);
+
+
+                }
+            }
+
+            return tblCsvMPReport;
+        }
+
+        /// <summary>
+        /// Объединение всех CSV в указанной папке в один файл с именем папки
+        /// </summary>
+        public string MergeCSVInFolder(string pathToCSV)
+        {
+            string mergeFilePath = pathToCSV + "\\" + pathToCSV.Substring(pathToCSV.LastIndexOf(@"\") + 1) + ".csv";
+            string mergeFileName = pathToCSV.Substring(pathToCSV.LastIndexOf(@"\") + 1) + ".csv";
+
+            var dirInfo = new DirectoryInfo(pathToCSV);
+
+            foreach (var file in dirInfo.EnumerateFiles("*.csv", SearchOption.TopDirectoryOnly))
+            {
+                //var fileLines = File.ReadAllLines(file.FullName, Encoding.GetEncoding("UTF-8"));
+                var fileLines = File.ReadAllLines(file.FullName);
+                File.AppendAllLines(mergeFilePath, fileLines);
+            }
+
+            return mergeFilePath;
+        }
+
+
+
+
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////ОБРАБОТКА DataTable\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
         /// <summary>
         /// Удаление дубликатов из DataTable
@@ -306,23 +318,11 @@ namespace GUI_SecChecker_v2
         }
 
         /// <summary>
-        /// Тестирование удаления дубликатов в DataTable
-        /// </summary>
-        private void bt_DelDuplicate_Click(object sender, EventArgs e)
-        {
-            DataTable tblWhithDuplicateRows = new DataTable();
-            tblWhithDuplicateRows = ReadCSVWithHeadersToDataTable(tb_PathSCCMReport.Text, ',');
-            DataTable tblWithUniqueRows = new DataTable();
-            tblWithUniqueRows = tblWhithDuplicateRows.Copy();
-            tblWithUniqueRows = RemoveDuplicateRows(tblWithUniqueRows, "Name0");
-        }
-
-        /// <summary>
         /// Удаление строк с пустыми именами из отчета MP
         /// </summary>
         public DataTable RemoveRowsWithEmptyNameFromMPReport(DataTable dt)
         {
-            for (int i = 0; i < dt.Rows.Count; i++ )
+            for (int i = 0; i < dt.Rows.Count; i++)
             {
                 if (dt.Rows[i]["MP_Name"].ToString() == "null" && dt.Rows[i]["MP_NameFull"].ToString() == "null")
                 {
@@ -332,13 +332,16 @@ namespace GUI_SecChecker_v2
                 {
                     dt.Rows[i].Delete();
                 }
-                    
+
             }
             dt.AcceptChanges();
 
             return dt;
         }
 
+        /// <summary>
+        /// Удаление строк из отчета MP содержащих домен Omega
+        /// </summary>
         public DataTable RemoveRowsWithDomainOmegaFromMPReport(DataTable dt)
         {
             for (int i = 0; i < dt.Rows.Count; i++)
@@ -355,14 +358,6 @@ namespace GUI_SecChecker_v2
         }
 
         /// <summary>
-        /// Тест удаления мусора из отчета MP
-        /// </summary>
-        private void bt_RemoveTrashFromMP_Click(object sender, EventArgs e)
-        {
-            RemoveDuplicateAndRowsWithEmptyNameFromMPReport();
-        }
-
-        /// <summary>
         /// Удаление дубликатов и строк с пустыми именами  и с доменом omega из отчета MP
         /// </summary>
         private void RemoveDuplicateAndRowsWithEmptyNameFromMPReport()
@@ -375,22 +370,17 @@ namespace GUI_SecChecker_v2
             tblWithCleanMPReport = RemoveRowsWithDomainOmegaFromMPReport(tblWithCleanMPReport);
         }
 
-
-
-
-
         ////////////////////////////////////////////////////////////////////////////////ОБРАБОТКА КНОПОК\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-        
+
         //////// Кнопка Получить данные из AD
         private void bt_GetDataAD_Click(object sender, EventArgs e)
         {
             listDomain = tb_domain.Text.Split(';');
-            GetComputersFromMultipleDomains(listDomain);
+            tblWithCompAD = GetComputersFromMultipleDomains(listDomain);
 
             MessageBox.Show("AD Done!");
 
         }
-
 
 
         //////// Кнопка Указать путь к отчетам MP
@@ -413,6 +403,13 @@ namespace GUI_SecChecker_v2
             MessageBox.Show("MP Done!");
         }
 
+        //////// Кнопка Тест удаления мусора из отчета MP
+        private void bt_RemoveTrashFromMP_Click(object sender, EventArgs e)
+        {
+            RemoveDuplicateAndRowsWithEmptyNameFromMPReport();
+        }
+
+
 
         //////// Кнопка Указать путь к отчетам KSC
         private void bt_BrowseKSCReport_Click(object sender, EventArgs e)
@@ -434,6 +431,7 @@ namespace GUI_SecChecker_v2
         }
 
 
+
         //////// Кнопка Указать путь к отчетам SEP
         private void bt_BrowseSEPReport_Click(object sender, EventArgs e)
         {
@@ -453,6 +451,7 @@ namespace GUI_SecChecker_v2
         }
 
 
+
         //////// Кнопка Указать путь к отчетам SCCM
         private void bt_BrowseSCCMReport_Click(object sender, EventArgs e)
         {
@@ -469,6 +468,18 @@ namespace GUI_SecChecker_v2
             tblWithSCCMReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(tb_PathSCCMReport.Text), ',');
 
             MessageBox.Show("SCCM Done!");
+        }
+
+
+
+        //////// Кнопка Тестирование удаления дубликатов в DataTable
+        private void bt_DelDuplicate_Click(object sender, EventArgs e)
+        {
+            DataTable tblWhithDuplicateRows = new DataTable();
+            tblWhithDuplicateRows = ReadCSVWithHeadersToDataTable(tb_PathSCCMReport.Text, ',');
+            DataTable tblWithUniqueRows = new DataTable();
+            tblWithUniqueRows = tblWhithDuplicateRows.Copy();
+            tblWithUniqueRows = RemoveDuplicateRows(tblWithUniqueRows, "Name0");
         }
     }
 }

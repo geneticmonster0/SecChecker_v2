@@ -470,5 +470,10 @@ namespace GUI_SecChecker_v2
 
             MessageBox.Show("SCCM Done!");
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            MessageBox.Show("");
+        }
     }
 }

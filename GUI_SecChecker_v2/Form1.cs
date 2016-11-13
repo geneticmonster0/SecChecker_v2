@@ -31,9 +31,14 @@ namespace GUI_SecChecker_v2
 
         TimeSpan daySpan30 = new TimeSpan(30, 0, 0, 0);
 
+        string dateFormatForAD = "yyyy.MM.dd HH.mm";
+
+        string dateFormatForKSC = "dd.mm.yyyy H:mm:ss";
+
         ///////////////////////////////////Переменые для Обработанных Данных/////////////////
         DataTable tblWithCleanMPReport;
         DataTable tblWithCleanADReport;
+        DataTable tblWithCleanKSCReport;
 
 
 
@@ -174,7 +179,7 @@ namespace GUI_SecChecker_v2
                        new CsvReader(new StreamReader(CSVWithHeadersFilepath), true, delimiter))
             {
                 //string[] headers = csv.GetFieldHeaders();
-
+                 
 
                 //tblCsvKSCReport.Clear();
                 //tblCsvKSCReport.Columns.Add("MP_IP1");
@@ -182,7 +187,7 @@ namespace GUI_SecChecker_v2
                 //tblCsvKSCReport.Columns.Add("MP_Name");
                 //tblCsvKSCReport.Columns.Add("MP_NameFull");
                 //tblCsvKSCReport.Columns.Add("MP_OS");
-
+                csv.MissingFieldAction = MissingFieldAction.ReplaceByNull;
                 tblCsvKSCReport.Load(csv);
 
                 
@@ -268,6 +273,157 @@ namespace GUI_SecChecker_v2
         }
 
         /// <summary>
+        /// Чтение CSV Отчета с заголовками в DataTable KSC
+        /// </summary>
+        public DataTable ReadCSVWithHeadersKSCToDataTable(string CSVWithHeadersFilepath, char delimiter)
+        {
+            DataTable _tblCsvKSCReport = new DataTable();
+            using (CsvReader csv =
+                       new CsvReader(new StreamReader(CSVWithHeadersFilepath), true, delimiter))
+            {
+                string[] headers = csv.GetFieldHeaders();
+
+
+                _tblCsvKSCReport.Clear();
+                _tblCsvKSCReport.Columns.Add("Имя");
+                _tblCsvKSCReport.Columns.Add("Тип операционной системы");
+                _tblCsvKSCReport.Columns.Add("Установлен Агент");
+                _tblCsvKSCReport.Columns.Add("Функционирует Агент");
+                _tblCsvKSCReport.Columns.Add("Установлен антивирус");
+                _tblCsvKSCReport.Columns.Add("IP-адрес");
+                _tblCsvKSCReport.Columns.Add("Видим в сети");
+                _tblCsvKSCReport.Columns.Add("Версия Агента администрирования");
+                _tblCsvKSCReport.Columns.Add("Версия защиты");
+                _tblCsvKSCReport.Columns.Add("Версия баз");
+                _tblCsvKSCReport.Columns.Add("Разрядность операционной системы");
+                _tblCsvKSCReport.Columns.Add("Сервер");
+                _tblCsvKSCReport.Columns.Add("Родительская группа");
+                
+
+
+
+                while (csv.ReadNextRecord())
+                {
+                    DataRow _rowCsv = _tblCsvKSCReport.NewRow();
+
+                    try
+                    {
+                        _rowCsv["Имя"] = csv["Имя"];
+                    }
+                    catch
+                    {
+                        _rowCsv["Имя"] = "";
+                    }
+
+                    try
+                    {
+                        _rowCsv["Тип операционной системы"] = csv["Тип операционной системы"];
+                    }
+                    catch
+                    {
+                        _rowCsv["Тип операционной системы"] = "";
+                    }
+                    try
+                    {
+                        _rowCsv["Установлен Агент"] = csv["Установлен Агент"];
+                    }
+                    catch
+                    {
+                        _rowCsv["Установлен Агент"] = "";
+                    }
+                    try
+                    {
+                        _rowCsv["Функционирует Агент"] = csv["Функционирует Агент"];
+                    }
+                    catch
+                    {
+                        _rowCsv["Функционирует Агент"] = "";
+                    }
+                    try
+                    {
+                        _rowCsv["Установлен антивирус"] = csv["Установлен антивирус"];
+                    }
+                    catch
+                    {
+                        _rowCsv["Установлен антивирус"] = "";
+                    }
+                    try
+                    {
+                        _rowCsv["IP-адрес"] = csv["IP-адрес"];
+                    }
+                    catch
+                    {
+                        _rowCsv["IP-адрес"] = "";
+                    }
+                    try
+                    {
+                        _rowCsv["Видим в сети"] = csv["Видим в сети"];
+                    }
+                    catch
+                    {
+                        _rowCsv["Видим в сети"] = "";
+                    }
+                    try
+                    {
+                        _rowCsv["Версия Агента администрирования"] = csv["Версия Агента администрирования"];
+                    }
+                    catch
+                    {
+                        _rowCsv["Версия Агента администрирования"] = "";
+                    }
+                    try
+                    {
+                        _rowCsv["Версия защиты"] = csv["Версия защиты"];
+                    }
+                    catch
+                    {
+                        _rowCsv["Версия защиты"] = "";
+                    }
+                    try
+                    {
+                        _rowCsv["Версия баз"] = csv["Версия баз"];
+                    }
+                    catch
+                    {
+                        _rowCsv["Версия баз"] = "";
+                    }
+                    try
+                    {
+                        _rowCsv["Разрядность операционной системы"] = csv["Разрядность операционной системы"];
+                    }
+                    catch
+                    {
+                        _rowCsv["Разрядность операционной системы"] = "";
+                    }
+                    try
+                    {
+                        _rowCsv["Сервер"] = csv["Сервер"];
+                    }
+                    catch
+                    {
+                        _rowCsv["Сервер"] = "";
+                    }
+                    try
+                    {
+                        _rowCsv["Родительская группа"] = csv["Родительская группа"];
+                    }
+                    catch
+                    {
+                        _rowCsv["Родительская группа"] = "";
+                    }
+
+
+
+                    _tblCsvKSCReport.Rows.Add(_rowCsv);
+
+
+                }
+            }
+            return _tblCsvKSCReport;
+
+        }
+
+        /// <summary>
         /// Объединение всех CSV в указанной папке в один файл с именем папки
         /// </summary>
         public string MergeCSVInFolder(string pathToCSV)
@@ -279,8 +435,8 @@ namespace GUI_SecChecker_v2
 
             foreach (var file in dirInfo.EnumerateFiles("*.csv", SearchOption.TopDirectoryOnly))
             {
-                //var fileLines = File.ReadAllLines(file.FullName, Encoding.GetEncoding("UTF-8"));
-                var fileLines = File.ReadAllLines(file.FullName);
+                var fileLines = File.ReadAllLines(file.FullName, Encoding.GetEncoding("UTF-8"));
+                //var fileLines = File.ReadAllLines(file.FullName);
                 File.AppendAllLines(mergeFilePath, fileLines);
             }
 
@@ -340,6 +496,44 @@ namespace GUI_SecChecker_v2
 
             return dt;
         }
+        /// <summary>
+        /// Удаление строк из DataTable равнающихся определенной строке в определенном столбце
+        /// </summary>
+        public DataTable RemoveRowsEqualsSpecificWordInColumn(DataTable dt, string colName, string searchWord)
+        {
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+
+                if (dt.Rows[i][colName].ToString() == searchWord)
+                {
+                    dt.Rows[i].Delete();
+                }
+
+            }
+            dt.AcceptChanges();
+
+            return dt;
+        }
+
+
+        /// <summary>
+        /// Удаление записей с датой больше чем daySpan
+        /// </summary>
+        public DataTable RemoveRowsWithDateOldestTimeSpan(DataTable dt, string colName, TimeSpan daySpan, string dateFormat)
+        {
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString(), dateFormat, CultureInfo.InvariantCulture) > daySpan)
+                {
+                    dt.Rows[i].Delete();
+                }
+
+            }
+            dt.AcceptChanges();
+
+            return dt;
+        }
 
 
         ////////////////////////////////////////////////////////////////////////ОБРАБОТКА DataTable MP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -383,24 +577,6 @@ namespace GUI_SecChecker_v2
 
         ////////////////////////////////////////////////////////////////////////////////ОБРАБОТКА DataTable AD\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-        /// <summary>
-        /// Удаление записей с LastLogon старше 30 дней
-        /// </summary>
-        public DataTable RemoveRowsOldLastLogonFromADReport(DataTable dt, string colName, TimeSpan daySpan)
-        {
-            
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-                if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString(), "yyyy.MM.dd HH.mm", CultureInfo.InvariantCulture) > daySpan)
-                {
-                    dt.Rows[i].Delete();
-                }
-
-            }
-            dt.AcceptChanges();
-
-            return dt;
-        }
 
         /// <summary>
         /// Удаление дубликтов, Disable, LastLogon из AD
@@ -411,11 +587,31 @@ namespace GUI_SecChecker_v2
             _tblWithCleanADReport = tblWithADReport.Copy();
             _tblWithCleanADReport = RemoveDuplicateRows(_tblWithCleanADReport, "name");
             _tblWithCleanADReport = RemoveRowsContainsSpecificWordInColumn(_tblWithCleanADReport, "Disabled", "True");            
-            _tblWithCleanADReport = RemoveRowsOldLastLogonFromADReport(_tblWithCleanADReport, "LastLogonTimeStamp", daySpan30);
+            _tblWithCleanADReport = RemoveRowsWithDateOldestTimeSpan(_tblWithCleanADReport, "LastLogonTimeStamp", daySpan30, dateFormatForAD);
 
 
             return _tblWithCleanADReport;            
         }
+
+        ////////////////////////////////////////////////////////////////////////////////ОБРАБОТКА DataTable KSC\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+        /// <summary>
+        /// Удаление без IP, дата соединения > 30, дубликатов из KSC
+        /// </summary>
+        private DataTable RemoveDuplicateAndNoIPAndOldLastConnectionFromKSCReport()
+        {
+            DataTable _tblWithCleanKSCReport = new DataTable();
+            _tblWithCleanKSCReport = tblWithKSCReport.Copy();
+            //_tblWithCleanKSCReport = RemoveDuplicateRows(_tblWithCleanKSCReport, "Имя");
+            _tblWithCleanKSCReport = RemoveRowsEqualsSpecificWordInColumn(_tblWithCleanKSCReport, "IP-адрес", "");
+            _tblWithCleanKSCReport = RemoveRowsEqualsSpecificWordInColumn(_tblWithCleanKSCReport, "Соединение с Сервером", "");
+            _tblWithCleanKSCReport = RemoveRowsWithDateOldestTimeSpan(_tblWithCleanKSCReport, "Соединение с Сервером", daySpan30, dateFormatForKSC);
+
+
+            return _tblWithCleanKSCReport;
+        }
+
 
         ////////////////////////////////////////////////////////////////////////////////ОБРАБОТКА КНОПОК\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -478,9 +674,22 @@ namespace GUI_SecChecker_v2
         private void bt_ReadKSCReport_Click(object sender, EventArgs e)
         {
             tblWithKSCReport = new DataTable();
-            tblWithKSCReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(tb_PathKSCReport.Text), '\t');
+            tblWithKSCReport = ReadCSVWithHeadersKSCToDataTable(MergeCSVInFolder(tb_PathKSCReport.Text), '\t');
 
             MessageBox.Show("KSC Done!");
+        }
+        
+        //////// Кнопка Тест удаления мусора из отчета KSC
+        private void bt_RemoveTrashFromKSC_Click(object sender, EventArgs e)
+        {
+            tblWithCleanKSCReport = RemoveDuplicateAndNoIPAndOldLastConnectionFromKSCReport().Copy();
+        }
+
+        //////// Кнопка Тест отобразить результаты таблици tblWithKSCReport
+        private void bt_DisplayKSC_Click(object sender, EventArgs e)
+        {
+            dgv_ksc.DataSource = tblWithKSCReport;
+            
         }
 
 

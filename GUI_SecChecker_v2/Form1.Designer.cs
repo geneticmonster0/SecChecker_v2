@@ -63,6 +63,10 @@
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.bt_RemoveTrashFromAD = new System.Windows.Forms.Button();
+            this.bt_RemoveTrashFromKSC = new System.Windows.Forms.Button();
+            this.dgv_ksc = new System.Windows.Forms.DataGridView();
+            this.bt_DisplayKSC = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_ksc)).BeginInit();
             this.SuspendLayout();
             // 
             // label4
@@ -379,13 +383,47 @@
             this.bt_RemoveTrashFromAD.UseVisualStyleBackColor = true;
             this.bt_RemoveTrashFromAD.Click += new System.EventHandler(this.bt_RemoveTrashFromAD_Click);
             // 
+            // bt_RemoveTrashFromKSC
+            // 
+            this.bt_RemoveTrashFromKSC.Location = new System.Drawing.Point(224, 712);
+            this.bt_RemoveTrashFromKSC.Name = "bt_RemoveTrashFromKSC";
+            this.bt_RemoveTrashFromKSC.Size = new System.Drawing.Size(75, 56);
+            this.bt_RemoveTrashFromKSC.TabIndex = 16;
+            this.bt_RemoveTrashFromKSC.Text = "3) Remove trash from KSC";
+            this.bt_RemoveTrashFromKSC.UseVisualStyleBackColor = true;
+            this.bt_RemoveTrashFromKSC.Click += new System.EventHandler(this.bt_RemoveTrashFromKSC_Click);
+            // 
+            // dgv_ksc
+            // 
+            this.dgv_ksc.AllowUserToOrderColumns = true;
+            this.dgv_ksc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgv_ksc.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgv_ksc.Location = new System.Drawing.Point(622, 468);
+            this.dgv_ksc.Name = "dgv_ksc";
+            this.dgv_ksc.Size = new System.Drawing.Size(585, 402);
+            this.dgv_ksc.TabIndex = 17;
+            // 
+            // bt_DisplayKSC
+            // 
+            this.bt_DisplayKSC.Location = new System.Drawing.Point(908, 131);
+            this.bt_DisplayKSC.Name = "bt_DisplayKSC";
+            this.bt_DisplayKSC.Size = new System.Drawing.Size(75, 43);
+            this.bt_DisplayKSC.TabIndex = 16;
+            this.bt_DisplayKSC.Text = "KSC To DGV";
+            this.bt_DisplayKSC.UseVisualStyleBackColor = true;
+            this.bt_DisplayKSC.Click += new System.EventHandler(this.bt_DisplayKSC_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1219, 882);
+            this.Controls.Add(this.dgv_ksc);
             this.Controls.Add(this.bt_ReadSCCMReport);
             this.Controls.Add(this.bt_BrowseSCCMReport);
+            this.Controls.Add(this.bt_DisplayKSC);
             this.Controls.Add(this.bt_ReadSEPReport);
             this.Controls.Add(this.bt_BrowseSEPReport);
             this.Controls.Add(this.bt_ReadKSCReport);
@@ -396,6 +434,7 @@
             this.Controls.Add(this.label14);
             this.Controls.Add(this.tb_PathKSCReport);
             this.Controls.Add(this.label12);
+            this.Controls.Add(this.bt_RemoveTrashFromKSC);
             this.Controls.Add(this.bt_RemoveTrashFromAD);
             this.Controls.Add(this.bt_RemoveTrashFromMP);
             this.Controls.Add(this.bt_BrowseMPReport);
@@ -421,6 +460,7 @@
             this.Controls.Add(this.bt_GetDataAD);
             this.Name = "Form1";
             this.Text = "Form1";
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_ksc)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -463,6 +503,9 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Button bt_RemoveTrashFromAD;
+        private System.Windows.Forms.Button bt_RemoveTrashFromKSC;
+        private System.Windows.Forms.DataGridView dgv_ksc;
+        private System.Windows.Forms.Button bt_DisplayKSC;
     }
 }
 

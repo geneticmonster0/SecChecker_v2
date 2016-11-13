@@ -66,6 +66,7 @@
             this.bt_RemoveTrashFromKSC = new System.Windows.Forms.Button();
             this.dgv_ksc = new System.Windows.Forms.DataGridView();
             this.bt_DisplayKSC = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ksc)).BeginInit();
             this.SuspendLayout();
             // 
@@ -415,6 +416,16 @@
             this.bt_DisplayKSC.UseVisualStyleBackColor = true;
             this.bt_DisplayKSC.Click += new System.EventHandler(this.bt_DisplayKSC_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(996, 347);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 43);
+            this.button1.TabIndex = 16;
+            this.button1.Text = "Test DT Convert";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -424,6 +435,7 @@
             this.Controls.Add(this.bt_ReadSCCMReport);
             this.Controls.Add(this.bt_BrowseSCCMReport);
             this.Controls.Add(this.bt_DisplayKSC);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.bt_ReadSEPReport);
             this.Controls.Add(this.bt_BrowseSEPReport);
             this.Controls.Add(this.bt_ReadKSCReport);
@@ -506,6 +518,7 @@
         private System.Windows.Forms.Button bt_RemoveTrashFromKSC;
         private System.Windows.Forms.DataGridView dgv_ksc;
         private System.Windows.Forms.Button bt_DisplayKSC;
+        private System.Windows.Forms.Button button1;
     }
 }
 

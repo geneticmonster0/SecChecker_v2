@@ -33,7 +33,7 @@ namespace GUI_SecChecker_v2
 
         string dateFormatForAD = "yyyy.MM.dd HH.mm";
 
-        string dateFormatForKSC = "dd.mm.yyyy H:mm:ss";
+        string dateFormatForKSC = "dd.MM.yyyy";
 
         ///////////////////////////////////Переменые для Обработанных Данных/////////////////
         DataTable tblWithCleanMPReport;
@@ -273,157 +273,6 @@ namespace GUI_SecChecker_v2
         }
 
         /// <summary>
-        /// Чтение CSV Отчета с заголовками в DataTable KSC
-        /// </summary>
-        public DataTable ReadCSVWithHeadersKSCToDataTable(string CSVWithHeadersFilepath, char delimiter)
-        {
-            DataTable _tblCsvKSCReport = new DataTable();
-            using (CsvReader csv =
-                       new CsvReader(new StreamReader(CSVWithHeadersFilepath), true, delimiter))
-            {
-                string[] headers = csv.GetFieldHeaders();
-
-
-                _tblCsvKSCReport.Clear();
-                _tblCsvKSCReport.Columns.Add("Имя");
-                _tblCsvKSCReport.Columns.Add("Тип операционной системы");
-                _tblCsvKSCReport.Columns.Add("Установлен Агент");
-                _tblCsvKSCReport.Columns.Add("Функционирует Агент");
-                _tblCsvKSCReport.Columns.Add("Установлен антивирус");
-                _tblCsvKSCReport.Columns.Add("IP-адрес");
-                _tblCsvKSCReport.Columns.Add("Видим в сети");
-                _tblCsvKSCReport.Columns.Add("Версия Агента администрирования");
-                _tblCsvKSCReport.Columns.Add("Версия защиты");
-                _tblCsvKSCReport.Columns.Add("Версия баз");
-                _tblCsvKSCReport.Columns.Add("Разрядность операционной системы");
-                _tblCsvKSCReport.Columns.Add("Сервер");
-                _tblCsvKSCReport.Columns.Add("Родительская группа");
-                
-
-
-
-                while (csv.ReadNextRecord())
-                {
-                    DataRow _rowCsv = _tblCsvKSCReport.NewRow();
-
-                    try
-                    {
-                        _rowCsv["Имя"] = csv["Имя"];
-                    }
-                    catch
-                    {
-                        _rowCsv["Имя"] = "";
-                    }
-
-                    try
-                    {
-                        _rowCsv["Тип операционной системы"] = csv["Тип операционной системы"];
-                    }
-                    catch
-                    {
-                        _rowCsv["Тип операционной системы"] = "";
-                    }
-                    try
-                    {
-                        _rowCsv["Установлен Агент"] = csv["Установлен Агент"];
-                    }
-                    catch
-                    {
-                        _rowCsv["Установлен Агент"] = "";
-                    }
-                    try
-                    {
-                        _rowCsv["Функционирует Агент"] = csv["Функционирует Агент"];
-                    }
-                    catch
-                    {
-                        _rowCsv["Функционирует Агент"] = "";
-                    }
-                    try
-                    {
-                        _rowCsv["Установлен антивирус"] = csv["Установлен антивирус"];
-                    }
-                    catch
-                    {
-                        _rowCsv["Установлен антивирус"] = "";
-                    }
-                    try
-                    {
-                        _rowCsv["IP-адрес"] = csv["IP-адрес"];
-                    }
-                    catch
-                    {
-                        _rowCsv["IP-адрес"] = "";
-                    }
-                    try
-                    {
-                        _rowCsv["Видим в сети"] = csv["Видим в сети"];
-                    }
-                    catch
-                    {
-                        _rowCsv["Видим в сети"] = "";
-                    }
-                    try
-                    {
-                        _rowCsv["Версия Агента администрирования"] = csv["Версия Агента администрирования"];
-                    }
-                    catch
-                    {
-                        _rowCsv["Версия Агента администрирования"] = "";
-                    }
-                    try
-                    {
-                        _rowCsv["Версия защиты"] = csv["Версия защиты"];
-                    }
-                    catch
-                    {
-                        _rowCsv["Версия защиты"] = "";
-                    }
-                    try
-                    {
-                        _rowCsv["Версия баз"] = csv["Версия баз"];
-                    }
-                    catch
-                    {
-                        _rowCsv["Версия баз"] = "";
-                    }
-                    try
-                    {
-                        _rowCsv["Разрядность операционной системы"] = csv["Разрядность операционной системы"];
-                    }
-                    catch
-                    {
-                        _rowCsv["Разрядность операционной системы"] = "";
-                    }
-                    try
-                    {
-                        _rowCsv["Сервер"] = csv["Сервер"];
-                    }
-                    catch
-                    {
-                        _rowCsv["Сервер"] = "";
-                    }
-                    try
-                    {
-                        _rowCsv["Родительская группа"] = csv["Родительская группа"];
-                    }
-                    catch
-                    {
-                        _rowCsv["Родительская группа"] = "";
-                    }
-
-
-
-                    _tblCsvKSCReport.Rows.Add(_rowCsv);
-
-
-                }
-            }
-            return _tblCsvKSCReport;
-
-        }
-
-        /// <summary>
         /// Объединение всех CSV в указанной папке в один файл с именем папки
         /// </summary>
         public string MergeCSVInFolder(string pathToCSV)
@@ -524,10 +373,28 @@ namespace GUI_SecChecker_v2
 
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString(), dateFormat, CultureInfo.InvariantCulture) > daySpan)
+
+                DateTime debugDT = new DateTime();
+                if (DateTime.TryParseExact(dt.Rows[i][colName].ToString(), dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out debugDT))
                 {
-                    dt.Rows[i].Delete();
+                    if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString(), dateFormat, CultureInfo.InvariantCulture) > daySpan)                    
+                    {
+                        dt.Rows[i].Delete();
+                    }
                 }
+
+                int spaceIndex = (dt.Rows[i][colName].ToString().IndexOf(' '));
+                if (DateTime.TryParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out debugDT))
+                {
+                    
+                    if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture) > daySpan)
+                    {
+                        dt.Rows[i].Delete();
+                    }
+                }
+
+               
+                
 
             }
             dt.AcceptChanges();
@@ -603,7 +470,7 @@ namespace GUI_SecChecker_v2
         {
             DataTable _tblWithCleanKSCReport = new DataTable();
             _tblWithCleanKSCReport = tblWithKSCReport.Copy();
-            //_tblWithCleanKSCReport = RemoveDuplicateRows(_tblWithCleanKSCReport, "Имя");
+            _tblWithCleanKSCReport = RemoveDuplicateRows(_tblWithCleanKSCReport, "Имя");
             _tblWithCleanKSCReport = RemoveRowsEqualsSpecificWordInColumn(_tblWithCleanKSCReport, "IP-адрес", "");
             _tblWithCleanKSCReport = RemoveRowsEqualsSpecificWordInColumn(_tblWithCleanKSCReport, "Соединение с Сервером", "");
             _tblWithCleanKSCReport = RemoveRowsWithDateOldestTimeSpan(_tblWithCleanKSCReport, "Соединение с Сервером", daySpan30, dateFormatForKSC);
@@ -674,7 +541,7 @@ namespace GUI_SecChecker_v2
         private void bt_ReadKSCReport_Click(object sender, EventArgs e)
         {
             tblWithKSCReport = new DataTable();
-            tblWithKSCReport = ReadCSVWithHeadersKSCToDataTable(MergeCSVInFolder(tb_PathKSCReport.Text), '\t');
+            tblWithKSCReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(tb_PathKSCReport.Text), '\t');
 
             MessageBox.Show("KSC Done!");
         }
@@ -732,6 +599,12 @@ namespace GUI_SecChecker_v2
             MessageBox.Show("SCCM Done!");
         }
 
-
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string debugString = "28.09.2016";
+            DateTime debugDateTime = new DateTime();
+            // debugDateTime = Convert.ToDateTime(debugString);
+            debugDateTime = DateTime.ParseExact(debugString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+        }
     }
 }

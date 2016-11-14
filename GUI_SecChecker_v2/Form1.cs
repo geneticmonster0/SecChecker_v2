@@ -35,10 +35,16 @@ namespace GUI_SecChecker_v2
 
         string dateFormatForKSC = "dd.MM.yyyy";
 
+        string dateFormatForSEP = "MM/dd/yyyy";
+
+        string dateFormatForSCCM = "dd.MM.yyyy";
+
         ///////////////////////////////////Переменые для Обработанных Данных/////////////////
         DataTable tblWithCleanMPReport;
         DataTable tblWithCleanADReport;
         DataTable tblWithCleanKSCReport;
+        DataTable tblWithCleanSEPReport;
+        DataTable tblWithCleanSCCMReport;
 
 
 
@@ -384,14 +390,18 @@ namespace GUI_SecChecker_v2
                 }
 
                 int spaceIndex = (dt.Rows[i][colName].ToString().IndexOf(' '));
-                if (DateTime.TryParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out debugDT))
+                if (spaceIndex > 0)
                 {
-                    
-                    if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture) > daySpan)
+                    if (DateTime.TryParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out debugDT))
                     {
-                        dt.Rows[i].Delete();
+
+                        if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture) > daySpan)
+                        {
+                            dt.Rows[i].Delete();
+                        }
                     }
                 }
+               
 
                
                 
@@ -477,6 +487,62 @@ namespace GUI_SecChecker_v2
 
 
             return _tblWithCleanKSCReport;
+        }
+        
+        ////////////////////////////////////////////////////////////////////////////////ОБРАБОТКА DataTable SEP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        private DataTable RemoveDuplicateAndOldLastConnectionFromSEPReport()
+        {
+            DataTable _tblWithCleanSEPReport = new DataTable();
+            _tblWithCleanSEPReport = tblWithSEPReport.Copy();
+            try
+            {
+                _tblWithCleanSEPReport = RemoveDuplicateRows(_tblWithCleanSEPReport, "Computer Name");
+            }
+            catch
+            {
+
+            }
+            try
+            {
+                _tblWithCleanSEPReport = RemoveDuplicateRows(_tblWithCleanSEPReport, "Имя компьютера");
+            }
+            catch
+            {
+
+            }
+            try
+            {
+                _tblWithCleanSEPReport = RemoveRowsWithDateOldestTimeSpan(_tblWithCleanSEPReport, "Время последнего изменения состояния", daySpan30, dateFormatForSEP);
+            }
+            catch
+            {
+
+            }
+            try
+            {
+                _tblWithCleanSEPReport = RemoveRowsWithDateOldestTimeSpan(_tblWithCleanSEPReport, "Last time status changed", daySpan30, dateFormatForSEP);
+            }
+            catch
+            {
+
+            }
+
+
+            return _tblWithCleanSEPReport;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////ОБРАБОТКА DataTable SCCM\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        private DataTable RemoveDuplicateAndOldLastConnectionFromSCCMReport()
+        {
+
+            DataTable _tblWithCleanSCCMReport = new DataTable();
+            _tblWithCleanSCCMReport = tblWithSCCMReport.Copy();
+            _tblWithCleanSCCMReport = RemoveDuplicateRows(_tblWithCleanSCCMReport, "Name0");
+            _tblWithCleanSCCMReport = RemoveRowsWithDateOldestTimeSpan(_tblWithCleanSCCMReport, "LastLogon", daySpan30, dateFormatForSCCM);
+            
+            return _tblWithCleanSCCMReport;
         }
 
 
@@ -579,6 +645,12 @@ namespace GUI_SecChecker_v2
             MessageBox.Show("SEP Done!");
         }
 
+        //////// Кнопка Тест удаления мусора из отчета SEP
+        private void bt_RemoveTrashFromSEP_Click(object sender, EventArgs e)
+        {
+            tblWithCleanSEPReport = RemoveDuplicateAndOldLastConnectionFromSCCMReport().Copy();
+        }
+
 
 
         //////// Кнопка Указать путь к отчетам SCCM
@@ -599,12 +671,11 @@ namespace GUI_SecChecker_v2
             MessageBox.Show("SCCM Done!");
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        //////// Кнопка Тест удаления мусора из отчета SCCM
+        private void bt_RemoveTrashFromSCCM_Click(object sender, EventArgs e)
         {
-            string debugString = "28.09.2016";
-            DateTime debugDateTime = new DateTime();
-            // debugDateTime = Convert.ToDateTime(debugString);
-            debugDateTime = DateTime.ParseExact(debugString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            tblWithCleanSCCMReport = RemoveDuplicateAndOldLastConnectionFromSCCMReport().Copy();
         }
+
     }
 }

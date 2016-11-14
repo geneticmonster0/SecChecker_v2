@@ -66,7 +66,8 @@
             this.bt_RemoveTrashFromKSC = new System.Windows.Forms.Button();
             this.dgv_ksc = new System.Windows.Forms.DataGridView();
             this.bt_DisplayKSC = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.bt_RemoveTrashFromSEP = new System.Windows.Forms.Button();
+            this.bt_RemoveTrashFromSCCM = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ksc)).BeginInit();
             this.SuspendLayout();
             // 
@@ -397,9 +398,9 @@
             // dgv_ksc
             // 
             this.dgv_ksc.AllowUserToOrderColumns = true;
-            this.dgv_ksc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgv_ksc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.dgv_ksc.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv_ksc.Location = new System.Drawing.Point(622, 468);
             this.dgv_ksc.Name = "dgv_ksc";
@@ -416,15 +417,25 @@
             this.bt_DisplayKSC.UseVisualStyleBackColor = true;
             this.bt_DisplayKSC.Click += new System.EventHandler(this.bt_DisplayKSC_Click);
             // 
-            // button1
+            // bt_RemoveTrashFromSEP
             // 
-            this.button1.Location = new System.Drawing.Point(996, 347);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 43);
-            this.button1.TabIndex = 16;
-            this.button1.Text = "Test DT Convert";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.bt_RemoveTrashFromSEP.Location = new System.Drawing.Point(324, 712);
+            this.bt_RemoveTrashFromSEP.Name = "bt_RemoveTrashFromSEP";
+            this.bt_RemoveTrashFromSEP.Size = new System.Drawing.Size(75, 56);
+            this.bt_RemoveTrashFromSEP.TabIndex = 16;
+            this.bt_RemoveTrashFromSEP.Text = "4) Remove trash from SEP";
+            this.bt_RemoveTrashFromSEP.UseVisualStyleBackColor = true;
+            this.bt_RemoveTrashFromSEP.Click += new System.EventHandler(this.bt_RemoveTrashFromSEP_Click);
+            // 
+            // bt_RemoveTrashFromSCCM
+            // 
+            this.bt_RemoveTrashFromSCCM.Location = new System.Drawing.Point(429, 712);
+            this.bt_RemoveTrashFromSCCM.Name = "bt_RemoveTrashFromSCCM";
+            this.bt_RemoveTrashFromSCCM.Size = new System.Drawing.Size(75, 56);
+            this.bt_RemoveTrashFromSCCM.TabIndex = 16;
+            this.bt_RemoveTrashFromSCCM.Text = "5) Remove trash from SCCM";
+            this.bt_RemoveTrashFromSCCM.UseVisualStyleBackColor = true;
+            this.bt_RemoveTrashFromSCCM.Click += new System.EventHandler(this.bt_RemoveTrashFromSCCM_Click);
             // 
             // Form1
             // 
@@ -435,7 +446,6 @@
             this.Controls.Add(this.bt_ReadSCCMReport);
             this.Controls.Add(this.bt_BrowseSCCMReport);
             this.Controls.Add(this.bt_DisplayKSC);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.bt_ReadSEPReport);
             this.Controls.Add(this.bt_BrowseSEPReport);
             this.Controls.Add(this.bt_ReadKSCReport);
@@ -446,6 +456,8 @@
             this.Controls.Add(this.label14);
             this.Controls.Add(this.tb_PathKSCReport);
             this.Controls.Add(this.label12);
+            this.Controls.Add(this.bt_RemoveTrashFromSCCM);
+            this.Controls.Add(this.bt_RemoveTrashFromSEP);
             this.Controls.Add(this.bt_RemoveTrashFromKSC);
             this.Controls.Add(this.bt_RemoveTrashFromAD);
             this.Controls.Add(this.bt_RemoveTrashFromMP);
@@ -518,7 +530,8 @@
         private System.Windows.Forms.Button bt_RemoveTrashFromKSC;
         private System.Windows.Forms.DataGridView dgv_ksc;
         private System.Windows.Forms.Button bt_DisplayKSC;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button bt_RemoveTrashFromSEP;
+        private System.Windows.Forms.Button bt_RemoveTrashFromSCCM;
     }
 }
 

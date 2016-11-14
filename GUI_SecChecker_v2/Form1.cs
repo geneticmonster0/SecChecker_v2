@@ -522,7 +522,7 @@ namespace GUI_SecChecker_v2
         //////// Кнопка Тест удаления мусора из отчета MP
         private void bt_RemoveTrashFromMP_Click(object sender, EventArgs e)
         {
-            tblWithCleanADReport = RemoveDuplicateAndRowsWithEmptyNameFromMPReport().Copy();
+            tblWithCleanMPReport = RemoveDuplicateAndRowsWithEmptyNameFromMPReport().Copy();
         }
 
 

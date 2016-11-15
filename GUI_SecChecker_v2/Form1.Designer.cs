@@ -68,6 +68,17 @@
             this.bt_DisplayKSC = new System.Windows.Forms.Button();
             this.bt_RemoveTrashFromSEP = new System.Windows.Forms.Button();
             this.bt_RemoveTrashFromSCCM = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
+            this.button8 = new System.Windows.Forms.Button();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.bt_GetAllHost = new System.Windows.Forms.Button();
+            this.chb_ADFromFile = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ksc)).BeginInit();
             this.SuspendLayout();
             // 
@@ -121,7 +132,7 @@
             this.tb_pass.Name = "tb_pass";
             this.tb_pass.Size = new System.Drawing.Size(100, 20);
             this.tb_pass.TabIndex = 5;
-            this.tb_pass.Text = "Symc4now!";
+            this.tb_pass.Text = "VS1997vs";
             // 
             // tb_domain
             // 
@@ -129,7 +140,7 @@
             this.tb_domain.Name = "tb_domain";
             this.tb_domain.Size = new System.Drawing.Size(100, 20);
             this.tb_domain.TabIndex = 6;
-            this.tb_domain.Text = "example;example";
+            this.tb_domain.Text = "szbsbrf";
             // 
             // tb_login
             // 
@@ -137,7 +148,7 @@
             this.tb_login.Name = "tb_login";
             this.tb_login.Size = new System.Drawing.Size(100, 20);
             this.tb_login.TabIndex = 7;
-            this.tb_login.Text = "administrator";
+            this.tb_login.Text = "KartashevVS";
             // 
             // bt_GetDataAD
             // 
@@ -305,7 +316,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(362, 474);
+            this.label13.Location = new System.Drawing.Point(362, 431);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(37, 13);
             this.label13.TabIndex = 14;
@@ -314,7 +325,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(281, 516);
+            this.label14.Location = new System.Drawing.Point(281, 473);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(113, 13);
             this.label14.TabIndex = 14;
@@ -322,14 +333,14 @@
             // 
             // tb_PathSCCMReport
             // 
-            this.tb_PathSCCMReport.Location = new System.Drawing.Point(175, 549);
+            this.tb_PathSCCMReport.Location = new System.Drawing.Point(175, 506);
             this.tb_PathSCCMReport.Name = "tb_PathSCCMReport";
             this.tb_PathSCCMReport.Size = new System.Drawing.Size(209, 20);
             this.tb_PathSCCMReport.TabIndex = 15;
             // 
             // bt_BrowseSCCMReport
             // 
-            this.bt_BrowseSCCMReport.Location = new System.Drawing.Point(418, 546);
+            this.bt_BrowseSCCMReport.Location = new System.Drawing.Point(418, 503);
             this.bt_BrowseSCCMReport.Name = "bt_BrowseSCCMReport";
             this.bt_BrowseSCCMReport.Size = new System.Drawing.Size(75, 23);
             this.bt_BrowseSCCMReport.TabIndex = 16;
@@ -339,7 +350,7 @@
             // 
             // bt_ReadSCCMReport
             // 
-            this.bt_ReadSCCMReport.Location = new System.Drawing.Point(418, 575);
+            this.bt_ReadSCCMReport.Location = new System.Drawing.Point(418, 532);
             this.bt_ReadSCCMReport.Name = "bt_ReadSCCMReport";
             this.bt_ReadSCCMReport.Size = new System.Drawing.Size(75, 43);
             this.bt_ReadSCCMReport.TabIndex = 16;
@@ -349,7 +360,7 @@
             // 
             // bt_RemoveTrashFromMP
             // 
-            this.bt_RemoveTrashFromMP.Location = new System.Drawing.Point(15, 712);
+            this.bt_RemoveTrashFromMP.Location = new System.Drawing.Point(12, 670);
             this.bt_RemoveTrashFromMP.Name = "bt_RemoveTrashFromMP";
             this.bt_RemoveTrashFromMP.Size = new System.Drawing.Size(75, 56);
             this.bt_RemoveTrashFromMP.TabIndex = 16;
@@ -360,7 +371,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(12, 669);
+            this.label15.Location = new System.Drawing.Point(9, 611);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(96, 13);
             this.label15.TabIndex = 13;
@@ -377,7 +388,7 @@
             // 
             // bt_RemoveTrashFromAD
             // 
-            this.bt_RemoveTrashFromAD.Location = new System.Drawing.Point(122, 712);
+            this.bt_RemoveTrashFromAD.Location = new System.Drawing.Point(119, 670);
             this.bt_RemoveTrashFromAD.Name = "bt_RemoveTrashFromAD";
             this.bt_RemoveTrashFromAD.Size = new System.Drawing.Size(75, 56);
             this.bt_RemoveTrashFromAD.TabIndex = 16;
@@ -387,7 +398,7 @@
             // 
             // bt_RemoveTrashFromKSC
             // 
-            this.bt_RemoveTrashFromKSC.Location = new System.Drawing.Point(224, 712);
+            this.bt_RemoveTrashFromKSC.Location = new System.Drawing.Point(221, 670);
             this.bt_RemoveTrashFromKSC.Name = "bt_RemoveTrashFromKSC";
             this.bt_RemoveTrashFromKSC.Size = new System.Drawing.Size(75, 56);
             this.bt_RemoveTrashFromKSC.TabIndex = 16;
@@ -419,7 +430,7 @@
             // 
             // bt_RemoveTrashFromSEP
             // 
-            this.bt_RemoveTrashFromSEP.Location = new System.Drawing.Point(324, 712);
+            this.bt_RemoveTrashFromSEP.Location = new System.Drawing.Point(321, 670);
             this.bt_RemoveTrashFromSEP.Name = "bt_RemoveTrashFromSEP";
             this.bt_RemoveTrashFromSEP.Size = new System.Drawing.Size(75, 56);
             this.bt_RemoveTrashFromSEP.TabIndex = 16;
@@ -429,7 +440,7 @@
             // 
             // bt_RemoveTrashFromSCCM
             // 
-            this.bt_RemoveTrashFromSCCM.Location = new System.Drawing.Point(429, 712);
+            this.bt_RemoveTrashFromSCCM.Location = new System.Drawing.Point(426, 670);
             this.bt_RemoveTrashFromSCCM.Name = "bt_RemoveTrashFromSCCM";
             this.bt_RemoveTrashFromSCCM.Size = new System.Drawing.Size(75, 56);
             this.bt_RemoveTrashFromSCCM.TabIndex = 16;
@@ -437,11 +448,120 @@
             this.bt_RemoveTrashFromSCCM.UseVisualStyleBackColor = true;
             this.bt_RemoveTrashFromSCCM.Click += new System.EventHandler(this.bt_RemoveTrashFromSCCM_Click);
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(119, 759);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 56);
+            this.button2.TabIndex = 16;
+            this.button2.Text = "2) Get Host Not In AD";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.bt_RemoveTrashFromAD_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(221, 759);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 56);
+            this.button3.TabIndex = 16;
+            this.button3.Text = "3) Get Host WithOut KES";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.bt_RemoveTrashFromKSC_Click);
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(321, 759);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(75, 56);
+            this.button4.TabIndex = 16;
+            this.button4.Text = "4) Get Host WithOut SEP";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.bt_RemoveTrashFromSEP_Click);
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(426, 759);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(75, 56);
+            this.button5.TabIndex = 16;
+            this.button5.Text = "5) Get Host With Old Version KES";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.bt_RemoveTrashFromSCCM_Click);
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(519, 759);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(75, 56);
+            this.button6.TabIndex = 16;
+            this.button6.Text = "6) Get Host With Old Version SEP";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.bt_RemoveTrashFromSCCM_Click);
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(12, 821);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(75, 56);
+            this.button7.TabIndex = 16;
+            this.button7.Text = "7) Get Host With Old Base KES";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.bt_RemoveTrashFromSCCM_Click);
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(119, 821);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(75, 56);
+            this.button8.TabIndex = 16;
+            this.button8.Text = "8) Get Host With Old Base SEP";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.bt_RemoveTrashFromSCCM_Click);
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(9, 637);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(84, 13);
+            this.label17.TabIndex = 13;
+            this.label17.Text = "Чистка мусора";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(12, 735);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(150, 13);
+            this.label18.TabIndex = 13;
+            this.label18.Text = "Получение отчетных данных";
+            // 
+            // bt_GetAllHost
+            // 
+            this.bt_GetAllHost.Location = new System.Drawing.Point(12, 759);
+            this.bt_GetAllHost.Name = "bt_GetAllHost";
+            this.bt_GetAllHost.Size = new System.Drawing.Size(75, 56);
+            this.bt_GetAllHost.TabIndex = 16;
+            this.bt_GetAllHost.Text = "1) Get All Host";
+            this.bt_GetAllHost.UseVisualStyleBackColor = true;
+            this.bt_GetAllHost.Click += new System.EventHandler(this.bt_GetAllHost_Click);
+            // 
+            // chb_ADFromFile
+            // 
+            this.chb_ADFromFile.AutoSize = true;
+            this.chb_ADFromFile.Location = new System.Drawing.Point(305, 186);
+            this.chb_ADFromFile.Name = "chb_ADFromFile";
+            this.chb_ADFromFile.Size = new System.Drawing.Size(113, 17);
+            this.chb_ADFromFile.TabIndex = 18;
+            this.chb_ADFromFile.Text = "AD из Файла MP";
+            this.chb_ADFromFile.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1219, 882);
+            this.Controls.Add(this.chb_ADFromFile);
             this.Controls.Add(this.dgv_ksc);
             this.Controls.Add(this.bt_ReadSCCMReport);
             this.Controls.Add(this.bt_BrowseSCCMReport);
@@ -456,8 +576,16 @@
             this.Controls.Add(this.label14);
             this.Controls.Add(this.tb_PathKSCReport);
             this.Controls.Add(this.label12);
+            this.Controls.Add(this.button8);
+            this.Controls.Add(this.button7);
+            this.Controls.Add(this.button6);
+            this.Controls.Add(this.button5);
+            this.Controls.Add(this.button4);
             this.Controls.Add(this.bt_RemoveTrashFromSCCM);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.bt_RemoveTrashFromSEP);
+            this.Controls.Add(this.bt_GetAllHost);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.bt_RemoveTrashFromKSC);
             this.Controls.Add(this.bt_RemoveTrashFromAD);
             this.Controls.Add(this.bt_RemoveTrashFromMP);
@@ -470,6 +598,8 @@
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
+            this.Controls.Add(this.label18);
+            this.Controls.Add(this.label17);
             this.Controls.Add(this.label15);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -532,6 +662,17 @@
         private System.Windows.Forms.Button bt_DisplayKSC;
         private System.Windows.Forms.Button bt_RemoveTrashFromSEP;
         private System.Windows.Forms.Button bt_RemoveTrashFromSCCM;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Button bt_GetAllHost;
+        private System.Windows.Forms.CheckBox chb_ADFromFile;
     }
 }
 

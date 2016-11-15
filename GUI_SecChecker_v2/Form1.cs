@@ -13,6 +13,7 @@ using System.IO;
 using LumenWorks.Framework.IO.Csv;
 using System.Collections;
 using System.Globalization;
+using System.Linq;
 
 namespace GUI_SecChecker_v2
 {
@@ -45,6 +46,13 @@ namespace GUI_SecChecker_v2
         DataTable tblWithCleanKSCReport;
         DataTable tblWithCleanSEPReport;
         DataTable tblWithCleanSCCMReport;
+
+
+        ///////////////////////////////////Переменые для Отчетности/////////////////
+        DataTable tblWithAllHost;
+        DataTable tblWithHostNotInAD;
+        
+
 
 
 
@@ -377,31 +385,34 @@ namespace GUI_SecChecker_v2
         public DataTable RemoveRowsWithDateOldestTimeSpan(DataTable dt, string colName, TimeSpan daySpan, string dateFormat)
         {
 
+
             for (int i = 0; i < dt.Rows.Count; i++)
             {
 
                 DateTime debugDT = new DateTime();
                 if (DateTime.TryParseExact(dt.Rows[i][colName].ToString(), dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out debugDT))
                 {
-                    if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString(), dateFormat, CultureInfo.InvariantCulture) > daySpan)                    
+                    if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString(), dateFormat, CultureInfo.InvariantCulture) > daySpan)
                     {
                         dt.Rows[i].Delete();
                     }
                 }
-
-                int spaceIndex = (dt.Rows[i][colName].ToString().IndexOf(' '));
-                if (spaceIndex > 0)
+                else
                 {
-                    if (DateTime.TryParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out debugDT))
-                    {
+                    int spaceIndex = (dt.Rows[i][colName].ToString().IndexOf(' '));
 
-                        if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture) > daySpan)
+                    if (spaceIndex > 0)
+                    {
+                        if (DateTime.TryParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out debugDT))
                         {
-                            dt.Rows[i].Delete();
+
+                            if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture) > daySpan)
+                            {
+                                dt.Rows[i].Delete();
+                            }
                         }
                     }
                 }
-               
 
                
                 
@@ -551,8 +562,20 @@ namespace GUI_SecChecker_v2
         //////// Кнопка Получить данные из AD
         private void bt_GetDataAD_Click(object sender, EventArgs e)
         {
-            listDomain = tb_domain.Text.Split(';');
-            tblWithADReport = GetComputersFromMultipleDomains(listDomain);
+            if (chb_ADFromFile.Checked)
+            {
+                tblWithADReport = new DataTable();
+                tblWithADReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(tb_PathMPReport.Text),';');
+                    
+            
+            }
+            else
+            {
+                listDomain = tb_domain.Text.Split(';');
+                tblWithADReport = new DataTable();
+                tblWithADReport = GetComputersFromMultipleDomains(listDomain);
+            }
+            
 
             MessageBox.Show("AD Done!");
 
@@ -676,6 +699,25 @@ namespace GUI_SecChecker_v2
         {
             tblWithCleanSCCMReport = RemoveDuplicateAndOldLastConnectionFromSCCMReport().Copy();
         }
+
+
+        //////// Кнопка Тест Получение всех Хостов
+        private void bt_GetAllHost_Click(object sender, EventArgs e)
+        {
+            var defaultRow = tblWithCleanADReport.NewRow();
+            defaultRow[0] = 0;
+            defaultRow[1] = String.Empty;
+
+            // the query
+            var result = from x in tblWithCleanMPReport.AsEnumerable()
+                         join y in tblWithCleanADReport.AsEnumerable() on (string)x["MP_Name"] equals (string)y["name"]
+                                  into DataGroup
+                         from row in DataGroup.DefaultIfEmpty<DataRow>(defaultRow)
+                         select new { a = x[0], b = (string)row[0] };
+            
+        }
+
+
 
     }
 }

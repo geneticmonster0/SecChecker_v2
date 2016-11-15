@@ -726,17 +726,51 @@ namespace GUI_SecChecker_v2
         private void bt_GetAllHost_Click(object sender, EventArgs e)
         {
             tblWithADReport = new DataTable();
-            tblWithADReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\AD"), ';');
+            tblWithADReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\geneticmonster0\Desktop\2016-11-15\SZB\AD"), ';');
 
             tblWithMPReport = new DataTable();
-            tblWithMPReport = ReadMPReportToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\MP"));
+            tblWithMPReport = ReadMPReportToDataTable(MergeCSVInFolder(@"C:\Users\geneticmonster0\Desktop\2016-11-15\SZB\MP"));
 
             tblWithCleanMPReport = RemoveDuplicateAndRowsWithEmptyNameFromMPReport().Copy();
             tblWithCleanADReport = RemoveDuplicateAndDisableAndOldLastLogonFromADReport().Copy();
 
-            var defaultRow = tblWithCleanADReport.NewRow();
-            defaultRow["name"] = String.Empty;
-            defaultRow[1] = String.Empty;
+            DataTable notInAd = new DataTable();
+            notInAd = tblWithCleanMPReport.Clone();
+            DataRow row;// =  notInAd.NewRow();
+
+            var table1 = tblWithADReport;
+
+
+
+            for (int i = 0; i < tblWithCleanMPReport.Rows.Count; i++)
+            {
+                bool thisRowContainsInTableB = false;
+                
+                for (int j = 0; j < tblWithCleanADReport.Rows.Count; j++)
+                {
+                    string strA = tblWithCleanMPReport.Rows[i]["MP_Name"].ToString();
+                    string strB = tblWithCleanADReport.Rows[j]["name"].ToString();
+                    if (tblWithCleanMPReport.Rows[i]["MP_Name"].ToString().ToUpper() == tblWithCleanADReport.Rows[j]["name"].ToString().ToUpper())
+                    {
+                        
+                        thisRowContainsInTableB = true;
+                        break;
+                    }
+
+                }
+                
+                row = tblWithCleanMPReport.Rows[i];
+                if (!thisRowContainsInTableB)
+                {
+                    notInAd.ImportRow(tblWithCleanMPReport.Rows[i]);
+                }
+            }
+
+
+
+            //var defaultRow = tblWithCleanADReport.NewRow();
+            //defaultRow["name"] = String.Empty;
+            //defaultRow[1] = String.Empty;
 
              //the query
             //var result = from x in tblWithCleanMPReport.AsEnumerable()
@@ -760,22 +794,25 @@ namespace GUI_SecChecker_v2
             //                 ColB = item == null ? string.Empty : item[1]
             //             };
 
-            var source = tblWithCleanMPReport.AsEnumerable();
-            var target = tblWithCleanADReport.AsEnumerable();
+            //var source = tblWithCleanMPReport.AsEnumerable();
+            //var target = tblWithCleanADReport.AsEnumerable();
+            ////var sourcename = source.Where(item => item.Field<string>("mp_name") != target);
 
-            var noMatchInSource = from dtSource in source
-                                  join dtTarget in target on dtSource.Field<string>("MP_Name") equals dtTarget.Field<string>("name")
-                                  where dtSource.Field<string>("MP_Name").Equals(dtTarget.Field<string>("name"))
-                                        //&& dtSource.Field<string>("lastname").Equals(dtTarget.Field<string>("lastname"))
-                                        //&& dtSource.Field<DateTime>("dob").Equals(dtTarget.Field<DateTime>("dob"))
-                                  select dtSource;
+            //var noMatchInSource = from dtSource in source
+            //                      join dtTarget in target on dtSource.Field<string>("MP_Name") equals dtTarget.Field<string>("name")
+            //                      where dtSource.Field<string>("MP_Name").Equals(dtTarget.Field<string>("name"))
+            //                            //&& dtSource.Field<string>("lastname").Equals(dtTarget.Field<string>("lastname"))
+            //                            //&& dtSource.Field<DateTime>("dob").Equals(dtTarget.Field<DateTime>("dob"))
+            //                      select dtSource;
 
-            var result =
-                        from sourceDataRow in tblWithCleanMPReport.AsEnumerable()
-                        where !(from noMatchDataRow in noMatchInSource
-                                select noMatchDataRow.Field<string>("MP_Name"))
-                               .Contains(sourceDataRow.Field<string>("MP_Name"))
-                        select sourceDataRow;
+            //var result =
+            //            from sourceDataRow in tblWithCleanMPReport.AsEnumerable()
+            //            where !(from noMatchDataRow in noMatchInSource
+            //                    select noMatchDataRow.Field<string>("MP_Name"))
+            //                   .Contains(sourceDataRow.Field<string>("MP_Name"))
+            //            select sourceDataRow;
+
+            //DataTable asds = result.CopyToDataTable();
             
                          
             

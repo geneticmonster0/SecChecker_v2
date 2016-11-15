@@ -13,7 +13,6 @@ using System.IO;
 using LumenWorks.Framework.IO.Csv;
 using System.Collections;
 using System.Globalization;
-using System.Linq;
 
 namespace GUI_SecChecker_v2
 {
@@ -21,6 +20,7 @@ namespace GUI_SecChecker_v2
     {
 
         string currPath = Environment.CurrentDirectory;
+        string tempPath = Environment.CurrentDirectory + "\\" + "Temp";
         string [] listDomain;
 
         ///////////////////////////////////Переменные для Исходные Данные/////////////////
@@ -61,7 +61,19 @@ namespace GUI_SecChecker_v2
             InitializeComponent();
         }
 
+        ////////////////////////////////////////////////////////////////////////////////Технические методы\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+        /// <summary>
+        /// Удаление всех файлов в папке
+        /// </summary>
+        public void DeleteFileInDir(string path)
+        {
+            System.IO.DirectoryInfo di = new DirectoryInfo(path);
 
+            foreach (FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+        }
 
         ////////////////////////////////////////////////////////////////////////////////Чтение данных из AD\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -291,8 +303,9 @@ namespace GUI_SecChecker_v2
         /// </summary>
         public string MergeCSVInFolder(string pathToCSV)
         {
-            string mergeFilePath = pathToCSV + "\\" + pathToCSV.Substring(pathToCSV.LastIndexOf(@"\") + 1) + ".csv";
-            string mergeFileName = pathToCSV.Substring(pathToCSV.LastIndexOf(@"\") + 1) + ".csv";
+            //string mergeFilePath = pathToCSV + "\\" + pathToCSV.Substring(pathToCSV.LastIndexOf(@"\") + 1) + ".csv";
+            string mergeFilePath = tempPath + "\\" + pathToCSV.Substring(pathToCSV.LastIndexOf(@"\") + 1) + ".csv";
+            //string mergeFileName = currPath + "\\" + pathToCSV.Substring(pathToCSV.LastIndexOf(@"\") + 1) + ".csv";
 
             var dirInfo = new DirectoryInfo(pathToCSV);
 
@@ -474,7 +487,15 @@ namespace GUI_SecChecker_v2
             DataTable _tblWithCleanADReport = new DataTable();
             _tblWithCleanADReport = tblWithADReport.Copy();
             _tblWithCleanADReport = RemoveDuplicateRows(_tblWithCleanADReport, "name");
-            _tblWithCleanADReport = RemoveRowsContainsSpecificWordInColumn(_tblWithCleanADReport, "Disabled", "True");            
+            if (!chb_ADFromFile.Checked)
+            {
+                _tblWithCleanADReport = RemoveRowsContainsSpecificWordInColumn(_tblWithCleanADReport, "Disabled", "True");
+            }
+            else
+            {
+                _tblWithCleanADReport = RemoveRowsContainsSpecificWordInColumn(_tblWithCleanADReport, "Enabled", "False");
+            }
+                        
             _tblWithCleanADReport = RemoveRowsWithDateOldestTimeSpan(_tblWithCleanADReport, "LastLogonTimeStamp", daySpan30, dateFormatForAD);
 
 
@@ -704,18 +725,68 @@ namespace GUI_SecChecker_v2
         //////// Кнопка Тест Получение всех Хостов
         private void bt_GetAllHost_Click(object sender, EventArgs e)
         {
+            tblWithADReport = new DataTable();
+            tblWithADReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\AD"), ';');
+
+            tblWithMPReport = new DataTable();
+            tblWithMPReport = ReadMPReportToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\MP"));
+
+            tblWithCleanMPReport = RemoveDuplicateAndRowsWithEmptyNameFromMPReport().Copy();
+            tblWithCleanADReport = RemoveDuplicateAndDisableAndOldLastLogonFromADReport().Copy();
+
             var defaultRow = tblWithCleanADReport.NewRow();
-            defaultRow[0] = 0;
+            defaultRow["name"] = String.Empty;
             defaultRow[1] = String.Empty;
 
-            // the query
-            var result = from x in tblWithCleanMPReport.AsEnumerable()
-                         join y in tblWithCleanADReport.AsEnumerable() on (string)x["MP_Name"] equals (string)y["name"]
-                                  into DataGroup
-                         from row in DataGroup.DefaultIfEmpty<DataRow>(defaultRow)
-                         select new { a = x[0], b = (string)row[0] };
+             //the query
+            //var result = from x in tblWithCleanMPReport.AsEnumerable()
+            //             join y in tblWithCleanADReport.AsEnumerable() on (string)x["MP_Name"] equals (string)y["name"]
+            //                      into DataGroup
+            //             from row in DataGroup.DefaultIfEmpty<DataRow>(defaultRow)
+            //             select new 
+            //             {
+            //                 a = x["MP_Name"]
+            //                 //,
+            //                 //b = (string)row["LastLogonTimeStamp"]
+            //             };
+
+            //var result = from x in tblWithCleanMPReport.AsEnumerable()
+            //             join y in tblWithCleanADReport.AsEnumerable() on x["MP_Name"] equals y["name"] into DataGroup
+            //             from item in DataGroup.DefaultIfEmpty<DataRow>(defaultRow)
+            //             select new
+            //             {
+            //                 ID = x[0],
+            //                 ColA = x[4],
+            //                 ColB = item == null ? string.Empty : item[1]
+            //             };
+
+            var source = tblWithCleanMPReport.AsEnumerable();
+            var target = tblWithCleanADReport.AsEnumerable();
+
+            var noMatchInSource = from dtSource in source
+                                  join dtTarget in target on dtSource.Field<string>("MP_Name") equals dtTarget.Field<string>("name")
+                                  where dtSource.Field<string>("MP_Name").Equals(dtTarget.Field<string>("name"))
+                                        //&& dtSource.Field<string>("lastname").Equals(dtTarget.Field<string>("lastname"))
+                                        //&& dtSource.Field<DateTime>("dob").Equals(dtTarget.Field<DateTime>("dob"))
+                                  select dtSource;
+
+            var result =
+                        from sourceDataRow in tblWithCleanMPReport.AsEnumerable()
+                        where !(from noMatchDataRow in noMatchInSource
+                                select noMatchDataRow.Field<string>("MP_Name"))
+                               .Contains(sourceDataRow.Field<string>("MP_Name"))
+                        select sourceDataRow;
+            
+                         
             
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            DeleteFileInDir(tempPath);
+        }
+
+
 
 
 

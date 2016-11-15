@@ -193,6 +193,7 @@
             this.tb_PathMPReport.Name = "tb_PathMPReport";
             this.tb_PathMPReport.Size = new System.Drawing.Size(209, 20);
             this.tb_PathMPReport.TabIndex = 15;
+            this.tb_PathMPReport.Text = "C:\\Users\\KartashevVS\\Desktop\\2016-10-21\\2016-11-15\\SZB\\AD";
             // 
             // label8
             // 
@@ -549,6 +550,8 @@
             // chb_ADFromFile
             // 
             this.chb_ADFromFile.AutoSize = true;
+            this.chb_ADFromFile.Checked = true;
+            this.chb_ADFromFile.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chb_ADFromFile.Location = new System.Drawing.Point(305, 186);
             this.chb_ADFromFile.Name = "chb_ADFromFile";
             this.chb_ADFromFile.Size = new System.Drawing.Size(113, 17);
@@ -613,7 +616,8 @@
             this.Controls.Add(this.tb_login);
             this.Controls.Add(this.bt_GetDataAD);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "f_Main";
+            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ksc)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

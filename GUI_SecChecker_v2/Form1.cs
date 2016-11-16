@@ -726,45 +726,65 @@ namespace GUI_SecChecker_v2
         private void bt_GetAllHost_Click(object sender, EventArgs e)
         {
             tblWithADReport = new DataTable();
-            tblWithADReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\geneticmonster0\Desktop\2016-11-15\SZB\AD"), ';');
+            tblWithADReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\AD"), ';');
 
             tblWithMPReport = new DataTable();
-            tblWithMPReport = ReadMPReportToDataTable(MergeCSVInFolder(@"C:\Users\geneticmonster0\Desktop\2016-11-15\SZB\MP"));
+            tblWithMPReport = ReadMPReportToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\MP"));
 
             tblWithCleanMPReport = RemoveDuplicateAndRowsWithEmptyNameFromMPReport().Copy();
             tblWithCleanADReport = RemoveDuplicateAndDisableAndOldLastLogonFromADReport().Copy();
 
             DataTable notInAd = new DataTable();
             notInAd = tblWithCleanMPReport.Clone();
-            DataRow row;// =  notInAd.NewRow();
+            DataRow row =  notInAd.NewRow();
 
-            var table1 = tblWithADReport;
+            //var table1 = tblWithADReport;
 
 
+            //var sourcename;
 
-            for (int i = 0; i < tblWithCleanMPReport.Rows.Count; i++)
-            {
-                bool thisRowContainsInTableB = false;
+            //for (int i = 0; i < tblWithCleanMPReport.Rows.Count; i++)
+            //{
                 
-                for (int j = 0; j < tblWithCleanADReport.Rows.Count; j++)
-                {
-                    string strA = tblWithCleanMPReport.Rows[i]["MP_Name"].ToString();
-                    string strB = tblWithCleanADReport.Rows[j]["name"].ToString();
-                    if (tblWithCleanMPReport.Rows[i]["MP_Name"].ToString().ToUpper() == tblWithCleanADReport.Rows[j]["name"].ToString().ToUpper())
-                    {
+                
+                //for (int j = 0; j < tblWithCleanADReport.Rows.Count; j++)
+                //{
+                //    bool thisRowContainsInTableB = false;
+                //    //string strA = tblWithCleanMPReport.Rows[i]["MP_Name"].ToString();
+                //    string strB = tblWithCleanADReport.Rows[j]["name"].ToString();
+                //    var sourcename = tblWithCleanMPReport.AsEnumerable().Where(item => item.Field<string>("mp_name").ToString().ToUpper() == tblWithCleanADReport.Rows[j]["name"].ToString().ToUpper());
+                //    if (sourcename != null)
+                //    {
                         
-                        thisRowContainsInTableB = true;
-                        break;
-                    }
+                //        thisRowContainsInTableB = true;
+                //        //break;
+                //    }
 
-                }
+                //}
                 
-                row = tblWithCleanMPReport.Rows[i];
-                if (!thisRowContainsInTableB)
+                ////row = tblWithCleanMPReport.Rows[i];
+                //if (!thisRowContainsInTableB)
+                //{
+                //    notInAd.ImportRow(tblWithCleanMPReport.Rows[i]);
+                //}
+
+                for (int i = 0; i < tblWithCleanMPReport.Rows.Count; i++)
                 {
-                    notInAd.ImportRow(tblWithCleanMPReport.Rows[i]);
+                    
+                    var sourcename = tblWithCleanADReport.AsEnumerable().Where(item => item.Field<string>("name").ToString().ToUpper() == tblWithCleanMPReport.Rows[i]["mp_name"].ToString().ToUpper());
+                   // DataTable dt = tblWithCleanMPReport.Clone();
+                   // dt.Rows.Add(sourcename.ToArray());
+                    //sourcename = null;
+                    //sourcename = tblWithCleanADReport.AsEnumerable().Where(item => item.Field<string>("name").ToString().ToUpper() == tblWithCleanMPReport.Rows[i]["mp_name"].ToString().ToUpper());
+                    if (sourcename.ToArray().Length < 1)
+                    {
+
+                        notInAd.ImportRow(tblWithCleanMPReport.Rows[i]);
+                        //break;
+                    }
                 }
-            }
+
+            //}
 
 
 

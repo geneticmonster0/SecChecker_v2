@@ -32,11 +32,15 @@ namespace GUI_SecChecker_v2
 
         TimeSpan daySpan30 = new TimeSpan(30, 0, 0, 0);
 
+        TimeSpan daySpan10 = new TimeSpan(10, 0, 0, 0);
+
         string dateFormatForAD = "yyyy.MM.dd HH.mm";
 
         string dateFormatForKSC = "dd.MM.yyyy";
 
         string dateFormatForSEP = "MM/dd/yyyy";
+
+        string dateFormatForSEPBase = "yyyy-MM-dd";
 
         string dateFormatForSCCM = "dd.MM.yyyy";
 
@@ -53,6 +57,11 @@ namespace GUI_SecChecker_v2
         DataTable tblWithHostNotInAD;
         DataTable tblWithHostWithoutKES;
         DataTable tblWithHostWithoutSEP;
+        DataTable tblWithHostOldBaseKES;
+        DataTable tblWithHostOldBaseSEP;
+        DataTable tblWithHostOldClientKES;
+        DataTable tblWithHostOldClientSEP;
+        DataTable tblWithHostWithoutSCCM;
 
 
 
@@ -403,7 +412,7 @@ namespace GUI_SecChecker_v2
 
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-
+                
                 DateTime debugDT = new DateTime();
                 if (DateTime.TryParseExact(dt.Rows[i][colName].ToString(), dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out debugDT))
                 {
@@ -422,6 +431,50 @@ namespace GUI_SecChecker_v2
                         {
 
                             if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture) > daySpan)
+                            {
+                                dt.Rows[i].Delete();
+                            }
+                        }
+                    }
+                }
+
+
+
+
+            }
+            dt.AcceptChanges();
+
+            return dt;
+        }
+
+        /// <summary>
+        /// Удаление записей с датой меньше чем daySpan
+        /// </summary>
+        public DataTable RemoveRowsWithDateNewestTimeSpan(DataTable dt, string colName, TimeSpan daySpan, string dateFormat)
+        {
+
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+
+                DateTime debugDT = new DateTime();
+                if (DateTime.TryParseExact(dt.Rows[i][colName].ToString(), dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out debugDT))
+                {
+                    if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString(), dateFormat, CultureInfo.InvariantCulture) < daySpan)
+                    {
+                        dt.Rows[i].Delete();
+                    }
+                }
+                else
+                {
+                    int spaceIndex = (dt.Rows[i][colName].ToString().IndexOf(' '));
+
+                    if (spaceIndex > 0)
+                    {
+                        if (DateTime.TryParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out debugDT))
+                        {
+
+                            if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture) < daySpan)
                             {
                                 dt.Rows[i].Delete();
                             }
@@ -766,10 +819,10 @@ namespace GUI_SecChecker_v2
 
             ////////////////////////////////////////////////////////////////////////////////////////////MP и AD\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
             tblWithADReport = new DataTable();
-            tblWithADReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\AD"), ';');
+            tblWithADReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\geneticmonster0\Desktop\2016-11-15\SZB\AD"), ';');
 
             tblWithMPReport = new DataTable();
-            tblWithMPReport = ReadMPReportToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\MP"));
+            tblWithMPReport = ReadMPReportToDataTable(MergeCSVInFolder(@"C:\Users\geneticmonster0\Desktop\2016-11-15\SZB\MP"));
 
             tblWithCleanMPReport = RemoveDuplicateAndRowsWithEmptyNameFromMPReport().Copy();
             tblWithCleanADReport = RemoveDuplicateAndDisableAndOldLastLogonFromADReport().Copy();
@@ -815,7 +868,7 @@ namespace GUI_SecChecker_v2
             ////////////////////////////////////////////////////////////////////////////////////////////ALL и KSC\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
             tblWithKSCReport = new DataTable();
-            tblWithKSCReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\KSC"), '\t');
+            tblWithKSCReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\geneticmonster0\Desktop\2016-11-15\SZB\KSC"), '\t');
             tblWithCleanKSCReport = RemoveDuplicateAndNoIPAndOldLastConnectionFromKSCReport().Copy();
 
 
@@ -847,7 +900,7 @@ namespace GUI_SecChecker_v2
             ////////////////////////////////////////////////////////////////////////////////////////////ALL и SEP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
             tblWithSEPReport = new DataTable();
-            tblWithSEPReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\SEP"), ',');
+            tblWithSEPReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\geneticmonster0\Desktop\2016-11-15\SZB\SEP"), ',');
             tblWithCleanSEPReport = RemoveDuplicateAndOldLastConnectionFromSEPReport().Copy();
 
 
@@ -888,6 +941,139 @@ namespace GUI_SecChecker_v2
 
             ////////////////////////////////////////////////////////////////////////////////////////////ALL KES OLD BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+            tblWithHostOldBaseKES = new DataTable();
+            tblWithHostOldBaseKES = tblWithAllHost.Clone();
+            tblWithAllHost.Columns.Add("OldBaseKES");
+            for (int i = 0; i < tblWithAllHost.Rows.Count; i++)
+            {
+                tblWithAllHost.Rows[i]["OldBaseKES"] = "False";
+            }
+
+            tblWithHostOldBaseKES = tblWithCleanKSCReport.Copy();
+            tblWithHostOldBaseKES = RemoveRowsWithDateNewestTimeSpan(tblWithHostOldBaseKES, "Версия баз", daySpan10, dateFormatForKSC);
+
+            for (int i = 0; i < tblWithHostOldBaseKES.Rows.Count; i++)
+            {
+                string query = "name = " + "'" + tblWithHostOldBaseKES.Rows[i]["name"] + "'";
+                DataRow[] row = tblWithAllHost.Select(query);
+                row[0]["OldBaseKES"] = "True";
+
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL SEP OLD BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            tblWithHostOldBaseSEP = new DataTable();
+            tblWithHostOldBaseSEP = tblWithAllHost.Clone();
+            tblWithAllHost.Columns.Add("OldBaseSEP");
+            for (int i = 0; i < tblWithAllHost.Rows.Count; i++)
+            {
+                tblWithAllHost.Rows[i]["OldBaseSEP"] = "False";
+            }
+
+            tblWithHostOldBaseSEP = tblWithCleanSEPReport.Copy();
+            try
+            {
+                tblWithHostOldBaseSEP = RemoveRowsWithDateNewestTimeSpan(tblWithHostOldBaseSEP, "Version", daySpan10, dateFormatForSEPBase);
+            }
+            catch { }
+            try
+            {
+                tblWithHostOldBaseSEP = RemoveRowsWithDateNewestTimeSpan(tblWithHostOldBaseSEP, "Описания вирусов", daySpan10, dateFormatForSEPBase);
+            }
+            catch { }
+
+            for (int i = 0; i < tblWithHostOldBaseSEP.Rows.Count; i++)
+            {
+                string query = "name = " + "'" + tblWithHostOldBaseSEP.Rows[i]["name"] + "'";
+                DataRow[] row = tblWithAllHost.Select(query);
+                row[0]["OldBaseSEP"] = "True";
+
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL KES OLD Client\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            tblWithHostOldClientKES = new DataTable();
+            tblWithHostOldClientKES = tblWithAllHost.Clone();
+            tblWithAllHost.Columns.Add("OldClientKES");
+            for (int i = 0; i < tblWithAllHost.Rows.Count; i++)
+            {
+                tblWithAllHost.Rows[i]["OldClientKES"] = "False";
+            }
+
+            
+            tblWithHostOldClientKES = tblWithCleanKSCReport.Copy();
+            tblWithHostOldClientKES = RemoveRowsContainsSpecificWordInColumn(tblWithHostOldClientKES, "Версия защиты", "10.");
+
+            for (int i = 0; i < tblWithHostOldClientKES.Rows.Count; i++)
+            {
+                string query = "name = " + "'" + tblWithHostOldClientKES.Rows[i]["name"] + "'";
+                DataRow[] row = tblWithAllHost.Select(query);
+                row[0]["OldClientKES"] = "True";
+
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL SEP OLD Client\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+            tblWithHostOldClientSEP = new DataTable();
+            tblWithHostOldClientSEP = tblWithAllHost.Clone();
+            tblWithAllHost.Columns.Add("OldClientSEP");
+            for (int i = 0; i < tblWithAllHost.Rows.Count; i++)
+            {
+                tblWithAllHost.Rows[i]["OldClientSEP"] = "False";
+            }
+
+            tblWithHostOldClientSEP = tblWithCleanSEPReport.Copy();
+            try
+            {
+                tblWithHostOldClientSEP = RemoveRowsContainsSpecificWordInColumn(tblWithHostOldClientSEP, "Client Version", "12.");
+            }
+            catch { }
+            try
+            {
+                tblWithHostOldClientSEP = RemoveRowsContainsSpecificWordInColumn(tblWithHostOldClientSEP, "Версия клиента", "12.");
+            }
+            catch { }
+
+            for (int i = 0; i < tblWithHostOldClientSEP.Rows.Count; i++)
+            {
+                string query = "name = " + "'" + tblWithHostOldClientSEP.Rows[i]["name"] + "'";
+                DataRow[] row = tblWithAllHost.Select(query);
+                row[0]["OldClientSEP"] = "True";
+
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL SCCM\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+            tblWithSCCMReport = new DataTable();
+            tblWithSCCMReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\geneticmonster0\Desktop\2016-11-15\SZB\SCCM"), ',');
+            tblWithCleanSCCMReport = RemoveDuplicateAndNoIPAndOldLastConnectionFromKSCReport().Copy();
+
+
+            tblWithHostWithoutSCCM = new DataTable();
+            tblWithHostWithoutSCCM = tblWithAllHost.Clone();
+
+
+
+            tblWithAllHost.Columns.Add("NotInSCCM");
+            for (int i = 0; i < tblWithAllHost.Rows.Count; i++)
+            {
+                tblWithAllHost.Rows[i]["NotInSCCM"] = "False";
+            }
+
+            tblWithHostWithoutSCCM = GetLeftOuterJoin(tblWithAllHost, "name", tblWithHostWithoutSCCM, "Name0");
+
+            for (int i = 0; i < tblWithHostWithoutSCCM.Rows.Count; i++)
+            {
+                string query = "name = " + "'" + tblWithHostWithoutSCCM.Rows[i]["name"] + "'";
+                DataRow[] row = tblWithAllHost.Select(query);
+                row[0]["NotInSCCM"] = "True";
+                //tblWithAllHost.Rows.Remove(tblWithAllHost.Select(query).First());
+                //tblWithAllHost.ImportRow(row[0]);
+
+            }
+
+            XLWorkbook wb = new XLWorkbook();
+            //DataTable dt = GetDataTableOrWhatever();
+            wb.Worksheets.Add(tblWithAllHost, "WorksheetName");
+            wb.SaveAs("resultexcel.xlsx");
         }
 
 

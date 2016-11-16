@@ -1,0 +1,8 @@
+X:\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\Debug\GUI_SecChecker_v2.csprojResolveAssemblyReference.cache
+X:\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\Debug\GUI_SecChecker_v2.Form1.resources
+X:\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\Debug\GUI_SecChecker_v2.Properties.Resources.resources
+X:\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\Debug\GUI_SecChecker_v2.csproj.GenerateResource.Cache
+X:\Projects\SecChecker_v2\GUI_SecChecker_v2\bin\Debug\GUI_SecChecker_v2.exe
+X:\Projects\SecChecker_v2\GUI_SecChecker_v2\bin\Debug\GUI_SecChecker_v2.pdb
+X:\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\Debug\GUI_SecChecker_v2.exe
+X:\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\Debug\GUI_SecChecker_v2.pdb

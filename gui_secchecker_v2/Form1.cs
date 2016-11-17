@@ -834,7 +834,347 @@ namespace GUI_SecChecker_v2
 
             GetTblWithHostNotInAD();
 
+            CreateTblForAllHost();
 
+            AddHostNotInADToAllHostTable();
+
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL и KSC\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            GetTblWithCleanKSCReport();
+
+            GetTblWithHostNotInKSC();
+
+            AddInfoAboutHostNotInKSCToAllHostTable();
+
+
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL и SEP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            GetTblWithCleanSEPReport();
+            GetTblWithHostNotInSEP();
+            AddInfoAboutHostNotInSEPToAllHostTable();
+
+
+
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL KES OLD BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            GetTblWithHostOldBaseKES();
+            AddInfoAboutHostOldBaseKESToAllHostTable();
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL SEP OLD BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            GetTblWithHostOldBaseSEP();
+            AddInfoAboutHostOldBaseSEPToAllHostTable();
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL KES OLD Client\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            GetTblWithHostOldClientKES();
+            AddInfoAboutHostOldClientKESToAllHostTable();
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL SEP OLD Client\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            GetTblWithHostOldClientSEP();
+            AddInfoAboutHostOldClientSEPToAllHostTable();
+
+
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL SCCM\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            GetTblWithCleanSCCMReport();
+
+            AddInfoAboutHostNotInSCCMToAllHostTable();
+
+            
+        }
+
+        /// <summary>
+        /// Метод помечает хосты без SCCM в таблице AllHost
+        /// </summary>
+        private void AddInfoAboutHostNotInSCCMToAllHostTable()
+        {
+            for (int i = 0; i < tblWithCleanSCCMReport.Rows.Count; i++)
+            {
+                string query = "name = " + "'" + tblWithCleanSCCMReport.Rows[i]["Name0"] + "'";
+                DataRow[] row = tblWithAllHost.Select(query);
+                if (row.Length != 0)
+                {
+                    row[0]["NotInSCCM"] = "True";
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// Получает чистый отчет SCCM в tblWithCleanSCCMReport
+        /// </summary>
+        private void GetTblWithCleanSCCMReport()
+        {
+            tblWithSCCMReport = new DataTable();
+            tblWithSCCMReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(tb_PathSCCMReport.Text), ',');
+            tblWithCleanSCCMReport = RemoveDuplicateAndOldLastConnectionFromSCCMReport().Copy();
+        }
+
+        /// <summary>
+        /// Метод помечает хосты со старыми клиентами SEP в таблице AllHost
+        /// </summary>
+        private void AddInfoAboutHostOldClientSEPToAllHostTable()
+        {
+            for (int i = 0; i < tblWithHostOldClientSEP.Rows.Count; i++)
+            {
+                string query = "";
+
+                try
+                {
+                    query = "name = " + "'" + tblWithHostOldClientSEP.Rows[i]["Computer Name"] + "'";
+                }
+                catch { }
+                try
+                {
+                    query = "name = " + "'" + tblWithHostOldClientSEP.Rows[i]["Имя компьютера"] + "'";
+                }
+                catch { }
+                DataRow[] row = tblWithAllHost.Select(query);
+                if (row.Length != 0)
+                {
+                    row[0]["OldClientSEP"] = "True";
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// Получает таблицу tblWithHostOldBaseSEP со списком хостов со старыми клиентами SEP
+        /// </summary>
+        private void GetTblWithHostOldClientSEP()
+        {
+            tblWithHostOldClientSEP = new DataTable();
+            tblWithHostOldClientSEP = tblWithAllHost.Clone();
+            tblWithHostOldClientSEP = tblWithCleanSEPReport.Copy();
+            try
+            {
+                tblWithHostOldClientSEP = RemoveRowsContainsSpecificWordInColumn(tblWithHostOldClientSEP, "Client Version", "12.");
+            }
+            catch { }
+            try
+            {
+                tblWithHostOldClientSEP = RemoveRowsContainsSpecificWordInColumn(tblWithHostOldClientSEP, "Версия клиента", "12.");
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Метод помечает хосты со старыми клиентами KES в таблице AllHost
+        /// </summary>
+        private void AddInfoAboutHostOldClientKESToAllHostTable()
+        {
+            for (int i = 0; i < tblWithHostOldClientKES.Rows.Count; i++)
+            {
+                string query = "name = " + "'" + tblWithHostOldClientKES.Rows[i]["Имя"] + "'";
+                DataRow[] row = tblWithAllHost.Select(query);
+                if (row.Length != 0)
+                {
+                    row[0]["OldClientKES"] = "True";
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// Получает таблицу tblWithHostOldBaseKES со списком хостов со старыми клиентами KES
+        /// </summary>
+        private void GetTblWithHostOldClientKES()
+        {
+            tblWithHostOldClientKES = new DataTable();
+            tblWithHostOldClientKES = tblWithAllHost.Clone();
+            tblWithHostOldClientKES = tblWithCleanKSCReport.Copy();
+            tblWithHostOldClientKES = RemoveRowsContainsSpecificWordInColumn(tblWithHostOldClientKES, "Версия защиты", "10.");
+        }
+
+        /// <summary>
+        /// Метод помечает хосты со старыми базами SEP в таблице AllHost
+        /// </summary>
+        private void AddInfoAboutHostOldBaseSEPToAllHostTable()
+        {
+            for (int i = 0; i < tblWithHostOldBaseSEP.Rows.Count; i++)
+            {
+                string query = "";
+                try
+                { query = "name = " + "'" + tblWithHostOldBaseSEP.Rows[i]["Computer Name"] + "'"; }
+                catch { }
+                try
+                { query = "name = " + "'" + tblWithHostOldBaseSEP.Rows[i]["Имя компьютера"] + "'"; }
+                catch { }
+
+                DataRow[] row = tblWithAllHost.Select(query);
+                if (row.Length != 0)
+                {
+                    row[0]["OldBaseSEP"] = "True";
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// Получает таблицу tblWithHostOldBaseSEP со списком хостов со старыми базами SEP
+        /// </summary>
+        private void GetTblWithHostOldBaseSEP()
+        {
+            tblWithHostOldBaseSEP = new DataTable();
+            tblWithHostOldBaseSEP = tblWithAllHost.Clone();
+            tblWithHostOldBaseSEP = tblWithCleanSEPReport.Copy();
+            try
+            {
+                tblWithHostOldBaseSEP = RemoveRowsWithDateNewestTimeSpan(tblWithHostOldBaseSEP, "Version", daySpan10, dateFormatForSEPBase);
+            }
+            catch { }
+            try
+            {
+                tblWithHostOldBaseSEP = RemoveRowsWithDateNewestTimeSpan(tblWithHostOldBaseSEP, "Описания вирусов", daySpan10, dateFormatForSEPBase);
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Метод помечает хосты со старыми базами KES в таблице AllHost
+        /// </summary>
+        private void AddInfoAboutHostOldBaseKESToAllHostTable()
+        {
+            for (int i = 0; i < tblWithHostOldBaseKES.Rows.Count; i++)
+            {
+                string query = "name = " + "'" + tblWithHostOldBaseKES.Rows[i]["Имя"] + "'";
+                DataRow[] row = tblWithAllHost.Select(query);
+                if (row.Length != 0)
+                {
+                    row[0]["OldBaseKES"] = "True";
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// Получает таблицу tblWithHostOldBaseKES со списком хостов со старыми базами KES
+        /// </summary>
+        private void GetTblWithHostOldBaseKES()
+        {
+            tblWithHostOldBaseKES = new DataTable();
+            tblWithHostOldBaseKES = tblWithAllHost.Clone();
+            tblWithHostOldBaseKES = tblWithCleanKSCReport.Copy();
+            tblWithHostOldBaseKES = RemoveRowsWithDateNewestTimeSpan(tblWithHostOldBaseKES, "Версия баз", daySpan10, dateFormatForKSC);
+        }
+
+        /// <summary>
+        /// Метод помечает хосты без SEP в таблице AllHost
+        /// </summary>
+        private void AddInfoAboutHostNotInSEPToAllHostTable()
+        {
+            for (int i = 0; i < tblWithHostWithoutSEP.Rows.Count; i++)
+            {
+                string query = "name = " + "'" + tblWithHostWithoutSEP.Rows[i]["name"] + "'";
+                DataRow[] row = tblWithAllHost.Select(query);
+                row[0]["NotInSEP"] = "True";
+
+            }
+        }
+
+        /// <summary>
+        /// Метод записывает данные о хостах без SEP в таблицу tblWithHostWithoutSEP
+        /// </summary>
+        private void GetTblWithHostNotInSEP()
+        {
+            tblWithHostWithoutSEP = new DataTable();
+            tblWithHostWithoutSEP = tblWithAllHost.Clone();
+
+            try
+            {
+                tblWithHostWithoutSEP = GetLeftOuterJoin(tblWithAllHost, "name", tblWithCleanSEPReport, "Computer Name");
+            }
+            catch { }
+            try
+            {
+                tblWithHostWithoutSEP = GetLeftOuterJoin(tblWithAllHost, "name", tblWithCleanSEPReport, "Имя компьютера");
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Добавлят чистые данные в tblWithCleanSEPReport из отчета SEP
+        /// </summary>
+        private void GetTblWithCleanSEPReport()
+        {
+            tblWithSEPReport = new DataTable();
+            tblWithSEPReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(tb_PathSEPReport.Text), ',');
+            tblWithCleanSEPReport = RemoveDuplicateAndOldLastConnectionFromSEPReport().Copy();
+        }
+
+        /// <summary>
+        /// Метод помечает хосты без KES в таблице AllHost
+        /// </summary>
+        private void AddInfoAboutHostNotInKSCToAllHostTable()
+        {
+            for (int i = 0; i < tblWithHostWithoutKES.Rows.Count; i++)
+            {
+                string query = "name = " + "'" + tblWithHostWithoutKES.Rows[i]["name"] + "'";
+                DataRow[] row = tblWithAllHost.Select(query);
+                row[0]["NotInKSC"] = "True";
+
+            }
+        }
+
+        /// <summary>
+        /// Метод записывает данные о хостах без KES в таблицу tblWithHostWithoutKES
+        /// </summary>
+        private void GetTblWithHostNotInKSC()
+        {
+            tblWithHostWithoutKES = new DataTable();
+            tblWithHostWithoutKES = tblWithAllHost.Clone();
+            tblWithHostWithoutKES = GetLeftOuterJoin(tblWithAllHost, "name", tblWithCleanKSCReport, "Имя");
+        }
+
+        /// <summary>
+        /// Добавлят чистые данные в tblWithCleanKSCReport из отчета KSC
+        /// </summary>
+        private void GetTblWithCleanKSCReport()
+        {
+            tblWithKSCReport = new DataTable();
+            tblWithKSCReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(tb_PathKSCReport.Text), '\t');
+            tblWithCleanKSCReport = RemoveDuplicateAndNoIPAndOldLastConnectionFromKSCReport().Copy();
+        }
+
+        /// <summary>
+        /// Добавление в таблицу AllHost хостов не в AD
+        /// </summary>
+        private void AddHostNotInADToAllHostTable()
+        {
+            for (int i = 0; i < tblWithHostNotInAD.Rows.Count; i++)
+            {
+                DataRow rowWithNotInAD = tblWithAllHost.NewRow();
+                rowWithNotInAD["name"] = tblWithHostNotInAD.Rows[i]["MP_Name"];
+                rowWithNotInAD["description"] = tblWithHostNotInAD.Rows[i]["MP_IP1"];
+                rowWithNotInAD["operatingSystem"] = tblWithHostNotInAD.Rows[i]["MP_OS"];
+                rowWithNotInAD["DistinguishedName"] = "empty";
+                rowWithNotInAD["LastLogonTimeStamp"] = "empty";
+                if (chb_ADFromFile.Checked)
+                {
+                    rowWithNotInAD["Enabled"] = "empty";
+                }
+                else
+                {
+                    rowWithNotInAD["Disabled"] = "empty";
+                }
+
+                rowWithNotInAD["NotInAD"] = "True";
+
+                tblWithAllHost.Rows.Add(rowWithNotInAD);
+            }
+        }
+
+        /// <summary>
+        /// Метод для создания таблицы для всех хостов (добавлены поля для пометки состояния АВПО, SCCM, AD)
+        /// </summary>
+        private void CreateTblForAllHost()
+        {
             tblWithAllHost = new DataTable();
             tblWithAllHost = tblWithCleanADReport.Copy();
 
@@ -858,250 +1198,9 @@ namespace GUI_SecChecker_v2
                 tblWithAllHost.Rows[i]["OldClientKES"] = "False";
                 tblWithAllHost.Rows[i]["OldClientSEP"] = "False";
                 tblWithAllHost.Rows[i]["NotInSCCM"] = "False";
-                
-
-            }
-
-
-            
-
-
-
-            for (int i = 0; i < tblWithHostNotInAD.Rows.Count; i++)
-            {
-                DataRow rowWithNotInAD = tblWithAllHost.NewRow();
-                rowWithNotInAD["name"] = tblWithHostNotInAD.Rows[i]["MP_Name"];
-                rowWithNotInAD["description"] = tblWithHostNotInAD.Rows[i]["MP_IP1"];
-                rowWithNotInAD["operatingSystem"] = tblWithHostNotInAD.Rows[i]["MP_OS"];
-                rowWithNotInAD["DistinguishedName"] = "empty";
-                rowWithNotInAD["LastLogonTimeStamp"] = "empty";
-                if (chb_ADFromFile.Checked)
-                {
-                    rowWithNotInAD["Enabled"] = "empty";
-                }
-                else
-                {
-                    rowWithNotInAD["Disabled"] = "empty";
-                }
-
-                rowWithNotInAD["NotInAD"] = "True";
-
-                tblWithAllHost.Rows.Add(rowWithNotInAD);
-            }
-
-
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL и KSC\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-            tblWithKSCReport = new DataTable();
-            tblWithKSCReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(tb_PathKSCReport.Text), '\t');
-            tblWithCleanKSCReport = RemoveDuplicateAndNoIPAndOldLastConnectionFromKSCReport().Copy();
-
-
-            tblWithHostWithoutKES = new DataTable();
-            tblWithHostWithoutKES = tblWithAllHost.Clone();
-
-
-
-
-
-            tblWithHostWithoutKES = GetLeftOuterJoin(tblWithAllHost, "name", tblWithCleanKSCReport, "Имя");
-
-            for (int i = 0; i < tblWithHostWithoutKES.Rows.Count; i++)
-            {
-                string query = "name = " + "'" + tblWithHostWithoutKES.Rows[i]["name"] + "'";
-                DataRow[] row = tblWithAllHost.Select(query);
-                row[0]["NotInKSC"] = "True";
-
-            }
-
-
-
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL и SEP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-            tblWithSEPReport = new DataTable();
-            tblWithSEPReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(tb_PathSEPReport.Text), ',');
-            tblWithCleanSEPReport = RemoveDuplicateAndOldLastConnectionFromSEPReport().Copy();
-
-
-            tblWithHostWithoutSEP = new DataTable();
-            tblWithHostWithoutSEP = tblWithAllHost.Clone();
-
-
-
-            
-
-            try
-            {
-                tblWithHostWithoutSEP = GetLeftOuterJoin(tblWithAllHost, "name", tblWithCleanSEPReport, "Computer Name");
-            }
-            catch { }
-            try
-            {
-                tblWithHostWithoutSEP = GetLeftOuterJoin(tblWithAllHost, "name", tblWithCleanSEPReport, "Имя компьютера");
-            }
-            catch { }
-
-            for (int i = 0; i < tblWithHostWithoutSEP.Rows.Count; i++)
-            {
-                string query = "name = " + "'" + tblWithHostWithoutSEP.Rows[i]["name"] + "'";
-                DataRow[] row = tblWithAllHost.Select(query);
-                row[0]["NotInSEP"] = "True";
-
-            }
-
-            
-
-
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL KES OLD BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-            tblWithHostOldBaseKES = new DataTable();
-            tblWithHostOldBaseKES = tblWithAllHost.Clone();
-
-
-            tblWithHostOldBaseKES = tblWithCleanKSCReport.Copy();
-            tblWithHostOldBaseKES = RemoveRowsWithDateNewestTimeSpan(tblWithHostOldBaseKES, "Версия баз", daySpan10, dateFormatForKSC);
-
-            for (int i = 0; i < tblWithHostOldBaseKES.Rows.Count; i++)
-            {
-                string query = "name = " + "'" + tblWithHostOldBaseKES.Rows[i]["Имя"] + "'";
-                DataRow[] row = tblWithAllHost.Select(query);
-                if (row.Length != 0)
-                {
-                    row[0]["OldBaseKES"] = "True";
-                }
-                
-
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL SEP OLD BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-            tblWithHostOldBaseSEP = new DataTable();
-            tblWithHostOldBaseSEP = tblWithAllHost.Clone();
-
-
-            tblWithHostOldBaseSEP = tblWithCleanSEPReport.Copy();
-            try
-            {
-                tblWithHostOldBaseSEP = RemoveRowsWithDateNewestTimeSpan(tblWithHostOldBaseSEP, "Version", daySpan10, dateFormatForSEPBase);
-            }
-            catch { }
-            try
-            {
-                tblWithHostOldBaseSEP = RemoveRowsWithDateNewestTimeSpan(tblWithHostOldBaseSEP, "Описания вирусов", daySpan10, dateFormatForSEPBase);
-            }
-            catch { }
-
-            for (int i = 0; i < tblWithHostOldBaseSEP.Rows.Count; i++)
-            {
-                string query = "";
-                try
-                { query = "name = " + "'" + tblWithHostOldBaseSEP.Rows[i]["Computer Name"] + "'"; }
-                catch { }
-                try
-                { query = "name = " + "'" + tblWithHostOldBaseSEP.Rows[i]["Имя компьютера"] + "'"; }
-                catch { }
-                
-                DataRow[] row = tblWithAllHost.Select(query);
-                if (row.Length != 0)
-                {
-                    row[0]["OldBaseSEP"] = "True";
-                }
-
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL KES OLD Client\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-            tblWithHostOldClientKES = new DataTable();
-            tblWithHostOldClientKES = tblWithAllHost.Clone();
-
-
-            
-            tblWithHostOldClientKES = tblWithCleanKSCReport.Copy();
-            tblWithHostOldClientKES = RemoveRowsContainsSpecificWordInColumn(tblWithHostOldClientKES, "Версия защиты", "10.");
-
-            for (int i = 0; i < tblWithHostOldClientKES.Rows.Count; i++)
-            {
-                string query = "name = " + "'" + tblWithHostOldClientKES.Rows[i]["Имя"] + "'";
-                DataRow[] row = tblWithAllHost.Select(query);
-                if (row.Length != 0)
-                {
-                    row[0]["OldClientKES"] = "True";
-                }
-
-            }
-
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL SEP OLD Client\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-            tblWithHostOldClientSEP = new DataTable();
-            tblWithHostOldClientSEP = tblWithAllHost.Clone();
-
-
-            tblWithHostOldClientSEP = tblWithCleanSEPReport.Copy();
-            try
-            {
-                tblWithHostOldClientSEP = RemoveRowsContainsSpecificWordInColumn(tblWithHostOldClientSEP, "Client Version", "12.");
-            }
-            catch { }
-            try
-            {
-                tblWithHostOldClientSEP = RemoveRowsContainsSpecificWordInColumn(tblWithHostOldClientSEP, "Версия клиента", "12.");
-            }
-            catch { }
-            
-            for (int i = 0; i < tblWithHostOldClientSEP.Rows.Count; i++)
-            {
-                string query = "";
-            
-                try
-                {
-                    query = "name = " + "'" + tblWithHostOldClientSEP.Rows[i]["Computer Name"] + "'";
-                }
-                catch { }
-                try
-                {
-                    query = "name = " + "'" + tblWithHostOldClientSEP.Rows[i]["Имя компьютера"] + "'";
-                }
-                catch { }
-                DataRow[] row = tblWithAllHost.Select(query);
-                if (row.Length != 0)
-                {
-                    row[0]["OldClientSEP"] = "True";
-                }
-
-            }
-
-            
-
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL SCCM\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-            tblWithSCCMReport = new DataTable();
-            tblWithSCCMReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(tb_PathSCCMReport.Text), ',');
-            tblWithCleanSCCMReport = RemoveDuplicateAndOldLastConnectionFromSCCMReport().Copy();
-
-
-            tblWithHostWithoutSCCM = new DataTable();
-            tblWithHostWithoutSCCM = tblWithAllHost.Clone();
-
-
-
-
-
-            for (int i = 0; i < tblWithCleanSCCMReport.Rows.Count; i++)
-            {
-                string query = "name = " + "'" + tblWithCleanSCCMReport.Rows[i]["Name0"] + "'";
-                DataRow[] row = tblWithAllHost.Select(query);
-                if (row.Length != 0)
-                {
-                    row[0]["NotInSCCM"] = "True";
-                }
 
 
             }
-
-            
-
-            XLWorkbook wb = new XLWorkbook();
-            //DataTable dt = GetDataTableOrWhatever();
-            wb.Worksheets.Add(tblWithAllHost, "WorksheetName");
-            wb.SaveAs("resultexcel.xlsx");
         }
 
         private void GetTblWithHostNotInAD()
@@ -1138,9 +1237,11 @@ namespace GUI_SecChecker_v2
             DeleteFileInDir(tempPath);
         }
 
-
-
-
-
+        private void bt_ExportMainResultToExcel_Click(object sender, EventArgs e)
+        {
+            XLWorkbook wb = new XLWorkbook();
+            wb.Worksheets.Add(tblWithAllHost, "WorksheetName");
+            wb.SaveAs("MainResult.xlsx");
+        }
     }
 }

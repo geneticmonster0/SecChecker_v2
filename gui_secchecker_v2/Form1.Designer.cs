@@ -56,6 +56,7 @@
             this.label16 = new System.Windows.Forms.Label();
             this.bt_GetAllHost = new System.Windows.Forms.Button();
             this.chb_ADFromFile = new System.Windows.Forms.CheckBox();
+            this.bt_ExportMainResultToExcel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label4
@@ -307,6 +308,16 @@
             this.chb_ADFromFile.Text = "AD из Файла MP";
             this.chb_ADFromFile.UseVisualStyleBackColor = true;
             // 
+            // bt_ExportMainResultToExcel
+            // 
+            this.bt_ExportMainResultToExcel.Location = new System.Drawing.Point(795, 149);
+            this.bt_ExportMainResultToExcel.Name = "bt_ExportMainResultToExcel";
+            this.bt_ExportMainResultToExcel.Size = new System.Drawing.Size(75, 56);
+            this.bt_ExportMainResultToExcel.TabIndex = 16;
+            this.bt_ExportMainResultToExcel.Text = "Export Main Result To Excel";
+            this.bt_ExportMainResultToExcel.UseVisualStyleBackColor = true;
+            this.bt_ExportMainResultToExcel.Click += new System.EventHandler(this.bt_ExportMainResultToExcel_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -321,6 +332,7 @@
             this.Controls.Add(this.label14);
             this.Controls.Add(this.tb_PathKSCReport);
             this.Controls.Add(this.label12);
+            this.Controls.Add(this.bt_ExportMainResultToExcel);
             this.Controls.Add(this.bt_GetAllHost);
             this.Controls.Add(this.bt_BrowseMPReport);
             this.Controls.Add(this.label13);
@@ -378,6 +390,7 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Button bt_GetAllHost;
         private System.Windows.Forms.CheckBox chb_ADFromFile;
+        private System.Windows.Forms.Button bt_ExportMainResultToExcel;
     }
 }
 

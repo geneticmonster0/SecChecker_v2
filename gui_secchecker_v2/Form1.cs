@@ -70,6 +70,15 @@ namespace GUI_SecChecker_v2
         public Form1()
         {
             InitializeComponent();
+
+            Shown += new EventHandler(Form1_Shown);
+
+            // To report progress from the background worker we need to set this property
+            backgroundWorker1.WorkerReportsProgress = true;
+            // This event will be raised on the worker thread when the worker starts
+            backgroundWorker1.DoWork += new DoWorkEventHandler(backgroundWorker1_DoWork);
+            // This event will be raised when we call ReportProgress
+            backgroundWorker1.ProgressChanged += new ProgressChangedEventHandler(backgroundWorker1_ProgressChanged);
         }
 
         ////////////////////////////////////////////////////////////////////////////////Технические методы\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -823,68 +832,9 @@ namespace GUI_SecChecker_v2
         //////// Кнопка Тест Получение всех Хостов
         private void bt_GetAllHost_Click(object sender, EventArgs e)
         {
+            backgroundWorker1.RunWorkerAsync();
 
-            ////////////////////////////////////////////////////////////////////////////////////////////MP и AD\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-            GetTblWithCleanADReport();
-
-
-            GetTblWithCleanMPReport();
-
-
-            GetTblWithHostNotInAD();
-
-            CreateTblForAllHost();
-
-            AddHostNotInADToAllHostTable();
-
-
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL и KSC\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-            GetTblWithCleanKSCReport();
-
-            GetTblWithHostNotInKSC();
-
-            AddInfoAboutHostNotInKSCToAllHostTable();
-
-
-
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL и SEP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-            GetTblWithCleanSEPReport();
-            GetTblWithHostNotInSEP();
-            AddInfoAboutHostNotInSEPToAllHostTable();
-
-
-
-
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL KES OLD BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-            GetTblWithHostOldBaseKES();
-            AddInfoAboutHostOldBaseKESToAllHostTable();
-
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL SEP OLD BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-            GetTblWithHostOldBaseSEP();
-            AddInfoAboutHostOldBaseSEPToAllHostTable();
-
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL KES OLD Client\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-            GetTblWithHostOldClientKES();
-            AddInfoAboutHostOldClientKESToAllHostTable();
-
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL SEP OLD Client\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-            GetTblWithHostOldClientSEP();
-            AddInfoAboutHostOldClientSEPToAllHostTable();
-
-
-
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL SCCM\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-            GetTblWithCleanSCCMReport();
-
-            AddInfoAboutHostNotInSCCMToAllHostTable();
+            
 
             
         }
@@ -1235,6 +1185,7 @@ namespace GUI_SecChecker_v2
         private void Form1_Load(object sender, EventArgs e)
         {
             DeleteFileInDir(tempPath);
+            
         }
 
         private void bt_ExportMainResultToExcel_Click(object sender, EventArgs e)
@@ -1242,6 +1193,87 @@ namespace GUI_SecChecker_v2
             XLWorkbook wb = new XLWorkbook();
             wb.Worksheets.Add(tblWithAllHost, "WorksheetName");
             wb.SaveAs("MainResult.xlsx");
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            
+        }
+
+        void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            ////////////////////////////////////////////////////////////////////////////////////////////MP и AD\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+            ////Убрать коммент
+            GetTblWithCleanADReport();
+
+            backgroundWorker1.ReportProgress(5);
+            GetTblWithCleanMPReport();
+
+
+            GetTblWithHostNotInAD();
+
+            CreateTblForAllHost();
+
+            AddHostNotInADToAllHostTable();
+            backgroundWorker1.ReportProgress(10);
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL и KSC\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            GetTblWithCleanKSCReport();
+
+            GetTblWithHostNotInKSC();
+
+            AddInfoAboutHostNotInKSCToAllHostTable();
+
+
+            backgroundWorker1.ReportProgress(20);
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL и SEP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            GetTblWithCleanSEPReport();
+            GetTblWithHostNotInSEP();
+            AddInfoAboutHostNotInSEPToAllHostTable();
+
+
+            backgroundWorker1.ReportProgress(30);
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL KES OLD BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            GetTblWithHostOldBaseKES();
+            AddInfoAboutHostOldBaseKESToAllHostTable();
+            backgroundWorker1.ReportProgress(40);
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL SEP OLD BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            GetTblWithHostOldBaseSEP();
+            AddInfoAboutHostOldBaseSEPToAllHostTable();
+            backgroundWorker1.ReportProgress(50);
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL KES OLD Client\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            GetTblWithHostOldClientKES();
+            AddInfoAboutHostOldClientKESToAllHostTable();
+            backgroundWorker1.ReportProgress(60);
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL SEP OLD Client\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            GetTblWithHostOldClientSEP();
+            AddInfoAboutHostOldClientSEPToAllHostTable();
+
+            backgroundWorker1.ReportProgress(70);
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL SCCM\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            GetTblWithCleanSCCMReport();
+
+            AddInfoAboutHostNotInSCCMToAllHostTable();
+            backgroundWorker1.ReportProgress(100);
+
+
+
+
+        }
+
+        void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            // The progress percentage is a property of e
+            progressBar1.Value = e.ProgressPercentage;
         }
     }
 }

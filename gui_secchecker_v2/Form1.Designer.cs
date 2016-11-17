@@ -57,6 +57,8 @@
             this.bt_GetAllHost = new System.Windows.Forms.Button();
             this.chb_ADFromFile = new System.Windows.Forms.CheckBox();
             this.bt_ExportMainResultToExcel = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // label4
@@ -318,11 +320,19 @@
             this.bt_ExportMainResultToExcel.UseVisualStyleBackColor = true;
             this.bt_ExportMainResultToExcel.Click += new System.EventHandler(this.bt_ExportMainResultToExcel_Click);
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(12, 549);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(858, 23);
+            this.progressBar1.TabIndex = 19;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(895, 610);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.chb_ADFromFile);
             this.Controls.Add(this.bt_BrowseSCCMReport);
             this.Controls.Add(this.bt_BrowseSEPReport);
@@ -355,6 +365,7 @@
             this.Name = "Form1";
             this.Text = "f_Main";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Shown += new System.EventHandler(this.Form1_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -391,6 +402,8 @@
         private System.Windows.Forms.Button bt_GetAllHost;
         private System.Windows.Forms.CheckBox chb_ADFromFile;
         private System.Windows.Forms.Button bt_ExportMainResultToExcel;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
 

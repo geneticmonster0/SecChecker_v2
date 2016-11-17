@@ -756,7 +756,41 @@ namespace GUI_SecChecker_v2
         //////// Кнопка Тест отобразить результаты таблици tblWithKSCReport
         private void bt_DisplayKSC_Click(object sender, EventArgs e)
         {
-            dgv_ksc.DataSource = tblWithKSCReport;
+            DataTable tblWithNotInAD = GetLeftOuterJoin(tblWithCleanMPReport.Copy(), "MP_Name", tblWithCleanADReport.Copy(), "name").Copy();
+
+            for (int i = 0; i < tblWithNotInAD.Rows.Count; i++)
+            {
+                DataRow rowWithNotInAD = tblWithAllHost.NewRow();
+                rowWithNotInAD["name"] = tblWithNotInAD.Rows[i]["MP_Name"];
+                rowWithNotInAD["description"] = tblWithNotInAD.Rows[i]["MP_IP1"];
+                rowWithNotInAD["operatingSystem"] = tblWithNotInAD.Rows[i]["MP_OS"];
+                rowWithNotInAD["DistinguishedName"] = "empty";
+                rowWithNotInAD["LastLogonTimeStamp"] = "empty";
+                if (chb_ADFromFile.Checked)
+                {
+                    rowWithNotInAD["Enabled"] = "empty";
+                }
+                else
+                {
+                    rowWithNotInAD["Disabled"] = "empty";
+                }
+
+                rowWithNotInAD["NotInAD"] = "True";
+
+                //tblWithAllHost.ImportRow(rowWithNotInAD);
+                tblWithAllHost.Rows.Add(rowWithNotInAD);
+            }
+           
+
+
+
+
+
+            XLWorkbook wb = new XLWorkbook();
+            
+            wb.Worksheets.Add(tblWithAllHost, "WorksheetName");
+            wb.SaveAs("resultexcel.xlsx");
+
 
         }
 
@@ -819,18 +853,18 @@ namespace GUI_SecChecker_v2
 
             ////////////////////////////////////////////////////////////////////////////////////////////MP и AD\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
             tblWithADReport = new DataTable();
-            tblWithADReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\geneticmonster0\Desktop\2016-11-15\SZB\AD"), ';');
+            tblWithADReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\AD"), ';');
 
             tblWithMPReport = new DataTable();
-            tblWithMPReport = ReadMPReportToDataTable(MergeCSVInFolder(@"C:\Users\geneticmonster0\Desktop\2016-11-15\SZB\MP"));
+            tblWithMPReport = ReadMPReportToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\MP"));
 
             tblWithCleanMPReport = RemoveDuplicateAndRowsWithEmptyNameFromMPReport().Copy();
             tblWithCleanADReport = RemoveDuplicateAndDisableAndOldLastLogonFromADReport().Copy();
 
 
 
-
-            DataTable tblWithNotInAD = GetLeftOuterJoin(tblWithCleanMPReport.Copy(), "MP_Name", tblWithCleanADReport.Copy(), "name").Copy();
+            tblWithHostNotInAD = new DataTable();
+            tblWithHostNotInAD = GetLeftOuterJoin(tblWithCleanMPReport.Copy(), "MP_Name", tblWithCleanADReport.Copy(), "name").Copy();
 
             tblWithAllHost = new DataTable();
             tblWithAllHost = tblWithCleanADReport.Copy();
@@ -842,12 +876,12 @@ namespace GUI_SecChecker_v2
             }
 
 
-            for (int i = 0; i < tblWithNotInAD.Rows.Count; i++)
+            for (int i = 0; i < tblWithHostNotInAD.Rows.Count; i++)
             {
                 DataRow rowWithNotInAD = tblWithAllHost.NewRow();
-                rowWithNotInAD["name"] = tblWithNotInAD.Rows[i]["MP_Name"];
-                rowWithNotInAD["description"] = tblWithNotInAD.Rows[i]["MP_IP1"];
-                rowWithNotInAD["operatingSystem"] = tblWithNotInAD.Rows[i]["MP_OS"];
+                rowWithNotInAD["name"] = tblWithHostNotInAD.Rows[i]["MP_Name"];
+                rowWithNotInAD["description"] = tblWithHostNotInAD.Rows[i]["MP_IP1"];
+                rowWithNotInAD["operatingSystem"] = tblWithHostNotInAD.Rows[i]["MP_OS"];
                 rowWithNotInAD["DistinguishedName"] = "empty";
                 rowWithNotInAD["LastLogonTimeStamp"] = "empty";
                 if (chb_ADFromFile.Checked)
@@ -861,14 +895,14 @@ namespace GUI_SecChecker_v2
 
                 rowWithNotInAD["NotInAD"] = "True";
 
-                tblWithAllHost.ImportRow(rowWithNotInAD);
+                tblWithAllHost.Rows.Add(rowWithNotInAD);
             }
 
 
             ////////////////////////////////////////////////////////////////////////////////////////////ALL и KSC\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
             tblWithKSCReport = new DataTable();
-            tblWithKSCReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\geneticmonster0\Desktop\2016-11-15\SZB\KSC"), '\t');
+            tblWithKSCReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\KSC"), '\t');
             tblWithCleanKSCReport = RemoveDuplicateAndNoIPAndOldLastConnectionFromKSCReport().Copy();
 
 
@@ -900,7 +934,7 @@ namespace GUI_SecChecker_v2
             ////////////////////////////////////////////////////////////////////////////////////////////ALL и SEP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
             tblWithSEPReport = new DataTable();
-            tblWithSEPReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\geneticmonster0\Desktop\2016-11-15\SZB\SEP"), ',');
+            tblWithSEPReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\SEP"), ',');
             tblWithCleanSEPReport = RemoveDuplicateAndOldLastConnectionFromSEPReport().Copy();
 
 
@@ -954,9 +988,13 @@ namespace GUI_SecChecker_v2
 
             for (int i = 0; i < tblWithHostOldBaseKES.Rows.Count; i++)
             {
-                string query = "name = " + "'" + tblWithHostOldBaseKES.Rows[i]["name"] + "'";
+                string query = "name = " + "'" + tblWithHostOldBaseKES.Rows[i]["Имя"] + "'";
                 DataRow[] row = tblWithAllHost.Select(query);
-                row[0]["OldBaseKES"] = "True";
+                if (row.Length != 0)
+                {
+                    row[0]["OldBaseKES"] = "True";
+                }
+                
 
             }
 
@@ -984,9 +1022,19 @@ namespace GUI_SecChecker_v2
 
             for (int i = 0; i < tblWithHostOldBaseSEP.Rows.Count; i++)
             {
-                string query = "name = " + "'" + tblWithHostOldBaseSEP.Rows[i]["name"] + "'";
+                string query = "";
+                try
+                { query = "name = " + "'" + tblWithHostOldBaseSEP.Rows[i]["Computer Name"] + "'"; }
+                catch { }
+                try
+                { query = "name = " + "'" + tblWithHostOldBaseSEP.Rows[i]["Имя компьютера"] + "'"; }
+                catch { }
+                
                 DataRow[] row = tblWithAllHost.Select(query);
-                row[0]["OldBaseSEP"] = "True";
+                if (row.Length != 0)
+                {
+                    row[0]["OldBaseSEP"] = "True";
+                }
 
             }
 
@@ -1006,9 +1054,12 @@ namespace GUI_SecChecker_v2
 
             for (int i = 0; i < tblWithHostOldClientKES.Rows.Count; i++)
             {
-                string query = "name = " + "'" + tblWithHostOldClientKES.Rows[i]["name"] + "'";
+                string query = "name = " + "'" + tblWithHostOldClientKES.Rows[i]["Имя"] + "'";
                 DataRow[] row = tblWithAllHost.Select(query);
-                row[0]["OldClientKES"] = "True";
+                if (row.Length != 0)
+                {
+                    row[0]["OldClientKES"] = "True";
+                }
 
             }
 
@@ -1032,19 +1083,35 @@ namespace GUI_SecChecker_v2
                 tblWithHostOldClientSEP = RemoveRowsContainsSpecificWordInColumn(tblWithHostOldClientSEP, "Версия клиента", "12.");
             }
             catch { }
-
+            
             for (int i = 0; i < tblWithHostOldClientSEP.Rows.Count; i++)
             {
-                string query = "name = " + "'" + tblWithHostOldClientSEP.Rows[i]["name"] + "'";
+                string query = "";
+            
+                try
+                {
+                    query = "name = " + "'" + tblWithHostOldClientSEP.Rows[i]["Computer Name"] + "'";
+                }
+                catch { }
+                try
+                {
+                    query = "name = " + "'" + tblWithHostOldClientSEP.Rows[i]["Имя компьютера"] + "'";
+                }
+                catch { }
                 DataRow[] row = tblWithAllHost.Select(query);
-                row[0]["OldClientSEP"] = "True";
+                if (row.Length != 0)
+                {
+                    row[0]["OldClientSEP"] = "True";
+                }
 
             }
 
+            dgv_ksc.DataSource = tblWithAllHost;
+
             ////////////////////////////////////////////////////////////////////////////////////////////ALL SCCM\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
             tblWithSCCMReport = new DataTable();
-            tblWithSCCMReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\geneticmonster0\Desktop\2016-11-15\SZB\SCCM"), ',');
-            tblWithCleanSCCMReport = RemoveDuplicateAndNoIPAndOldLastConnectionFromKSCReport().Copy();
+            tblWithSCCMReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\SCCM"), ',');
+            tblWithCleanSCCMReport = RemoveDuplicateAndOldLastConnectionFromSCCMReport().Copy();
 
 
             tblWithHostWithoutSCCM = new DataTable();
@@ -1058,17 +1125,19 @@ namespace GUI_SecChecker_v2
                 tblWithAllHost.Rows[i]["NotInSCCM"] = "False";
             }
 
-            tblWithHostWithoutSCCM = GetLeftOuterJoin(tblWithAllHost, "name", tblWithHostWithoutSCCM, "Name0");
-
-            for (int i = 0; i < tblWithHostWithoutSCCM.Rows.Count; i++)
+            for (int i = 0; i < tblWithCleanSCCMReport.Rows.Count; i++)
             {
-                string query = "name = " + "'" + tblWithHostWithoutSCCM.Rows[i]["name"] + "'";
+                string query = "name = " + "'" + tblWithCleanSCCMReport.Rows[i]["Name0"] + "'";
                 DataRow[] row = tblWithAllHost.Select(query);
-                row[0]["NotInSCCM"] = "True";
-                //tblWithAllHost.Rows.Remove(tblWithAllHost.Select(query).First());
-                //tblWithAllHost.ImportRow(row[0]);
+                if (row.Length != 0)
+                {
+                    row[0]["NotInSCCM"] = "True";
+                }
+
 
             }
+
+            dgv_ksc.DataSource = tblWithAllHost;
 
             XLWorkbook wb = new XLWorkbook();
             //DataTable dt = GetDataTableOrWhatever();

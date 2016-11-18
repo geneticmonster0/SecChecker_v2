@@ -27,6 +27,7 @@ namespace GUI_SecChecker_v2
 
         //Делегаты для отрисовки интерфейса
         public delegate void delUpdateUITextBox(string text);
+
         
         ///////////////////////////////////Переменные для Исходные Данные/////////////////
         DataTable tblWithADReport;
@@ -75,6 +76,8 @@ namespace GUI_SecChecker_v2
         public Form1()
         {
             InitializeComponent();
+
+
 
             Load += new EventHandler(Form1_Load);
 
@@ -837,6 +840,9 @@ namespace GUI_SecChecker_v2
         //////// Кнопка Тест Получение всех Хостов
         private void bt_GetAllHost_Click(object sender, EventArgs e)
         {
+            lb_TimeStart.Text = DateTime.Now.ToShortTimeString();
+
+            DateTime timeStart = DateTime.Now;
             DeleteFileInDir(tempPath);
             backgroundWorker1.RunWorkerAsync();
 
@@ -1339,7 +1345,14 @@ namespace GUI_SecChecker_v2
             AddInfoAboutHostNotInSCCMToAllHostTable();
             backgroundWorker1.ReportProgress(100);
 
-            MessageBox.Show("Complete");
+            DateTime timeStop = DateTime.Now;
+            lb_TimeStop.Text = DateTime.Now.ToShortTimeString();
+
+            //TimeSpan timeAll = timeStop - timeStart;
+
+            //lb_WorkingTime.Text = timeAll.TotalMinutes.ToString();
+
+            MessageBox.Show("Complete " + DateTime.Now.ToShortTimeString());
 
 
 
@@ -1392,5 +1405,7 @@ namespace GUI_SecChecker_v2
             // The progress percentage is a property of e
             progressBar1.Value = e.ProgressPercentage;            
         }
+
+
     }
 }

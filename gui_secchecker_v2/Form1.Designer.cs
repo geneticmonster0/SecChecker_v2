@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -61,6 +62,13 @@
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.label5 = new System.Windows.Forms.Label();
             this.lb_Status = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.label15 = new System.Windows.Forms.Label();
+            this.lb_TimeStart = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.lb_TimeStop = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.lb_WorkingTime = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label4
@@ -346,12 +354,69 @@
             this.lb_Status.Size = new System.Drawing.Size(0, 13);
             this.lb_Status.TabIndex = 20;
             // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(12, 428);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(180, 13);
+            this.label15.TabIndex = 20;
+            this.label15.Text = "Время начала обработки данных: ";
+            // 
+            // lb_TimeStart
+            // 
+            this.lb_TimeStart.AutoSize = true;
+            this.lb_TimeStart.Location = new System.Drawing.Point(198, 428);
+            this.lb_TimeStart.Name = "lb_TimeStart";
+            this.lb_TimeStart.Size = new System.Drawing.Size(0, 13);
+            this.lb_TimeStart.TabIndex = 20;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(9, 464);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(175, 13);
+            this.label17.TabIndex = 20;
+            this.label17.Text = "Время конца обработки данных: ";
+            // 
+            // lb_TimeStop
+            // 
+            this.lb_TimeStop.AutoSize = true;
+            this.lb_TimeStop.Location = new System.Drawing.Point(195, 464);
+            this.lb_TimeStop.Name = "lb_TimeStop";
+            this.lb_TimeStop.Size = new System.Drawing.Size(0, 13);
+            this.lb_TimeStop.TabIndex = 20;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(9, 491);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(113, 13);
+            this.label18.TabIndex = 20;
+            this.label18.Text = "Затрачено времени: ";
+            // 
+            // lb_WorkingTime
+            // 
+            this.lb_WorkingTime.AutoSize = true;
+            this.lb_WorkingTime.Location = new System.Drawing.Point(184, 491);
+            this.lb_WorkingTime.Name = "lb_WorkingTime";
+            this.lb_WorkingTime.Size = new System.Drawing.Size(0, 13);
+            this.lb_WorkingTime.TabIndex = 20;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(895, 610);
             this.Controls.Add(this.lb_Status);
+            this.Controls.Add(this.lb_WorkingTime);
+            this.Controls.Add(this.lb_TimeStop);
+            this.Controls.Add(this.lb_TimeStart);
+            this.Controls.Add(this.label18);
+            this.Controls.Add(this.label17);
+            this.Controls.Add(this.label15);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.chb_ADFromFile);
@@ -427,6 +492,13 @@
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lb_Status;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label lb_TimeStart;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label lb_TimeStop;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label lb_WorkingTime;
     }
 }
 

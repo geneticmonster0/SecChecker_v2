@@ -59,6 +59,8 @@
             this.bt_ExportMainResultToExcel = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.label5 = new System.Windows.Forms.Label();
+            this.lb_Status = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label4
@@ -327,11 +329,30 @@
             this.progressBar1.Size = new System.Drawing.Size(858, 23);
             this.progressBar1.TabIndex = 19;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(9, 518);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(47, 13);
+            this.label5.TabIndex = 20;
+            this.label5.Text = "Статус: ";
+            // 
+            // lb_Status
+            // 
+            this.lb_Status.AutoSize = true;
+            this.lb_Status.Location = new System.Drawing.Point(62, 518);
+            this.lb_Status.Name = "lb_Status";
+            this.lb_Status.Size = new System.Drawing.Size(0, 13);
+            this.lb_Status.TabIndex = 20;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(895, 610);
+            this.Controls.Add(this.lb_Status);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.chb_ADFromFile);
             this.Controls.Add(this.bt_BrowseSCCMReport);
@@ -404,6 +425,8 @@
         private System.Windows.Forms.Button bt_ExportMainResultToExcel;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lb_Status;
     }
 }
 

@@ -13,6 +13,7 @@ using System.IO;
 using LumenWorks.Framework.IO.Csv;
 using System.Collections;
 using System.Globalization;
+using System.Threading;
 
 namespace GUI_SecChecker_v2
 {
@@ -21,8 +22,12 @@ namespace GUI_SecChecker_v2
 
         string currPath = Environment.CurrentDirectory;
         string tempPath = Environment.CurrentDirectory + "\\" + "Temp";
+        string reportPath = Environment.CurrentDirectory + "\\" + "Report";
         string[] listDomain;
 
+        //Делегаты для отрисовки интерфейса
+        public delegate void delUpdateUITextBox(string text);
+        
         ///////////////////////////////////Переменные для Исходные Данные/////////////////
         DataTable tblWithADReport;
         DataTable tblWithMPReport;
@@ -61,7 +66,7 @@ namespace GUI_SecChecker_v2
         DataTable tblWithHostOldBaseSEP;
         DataTable tblWithHostOldClientKES;
         DataTable tblWithHostOldClientSEP;
-        DataTable tblWithHostWithoutSCCM;
+        //DataTable tblWithHostWithoutSCCM;
 
 
 
@@ -71,7 +76,7 @@ namespace GUI_SecChecker_v2
         {
             InitializeComponent();
 
-            Shown += new EventHandler(Form1_Shown);
+            Load += new EventHandler(Form1_Load);
 
             // To report progress from the background worker we need to set this property
             backgroundWorker1.WorkerReportsProgress = true;
@@ -832,6 +837,7 @@ namespace GUI_SecChecker_v2
         //////// Кнопка Тест Получение всех Хостов
         private void bt_GetAllHost_Click(object sender, EventArgs e)
         {
+            DeleteFileInDir(tempPath);
             backgroundWorker1.RunWorkerAsync();
 
             
@@ -1155,6 +1161,8 @@ namespace GUI_SecChecker_v2
 
         private void GetTblWithHostNotInAD()
         {
+            delUpdateUITextBox DelUpdateUItextBox = new delUpdateUITextBox(UpdateUITextBox);
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Получение хостов, которых нет в AD...");
             tblWithHostNotInAD = new DataTable();
             tblWithHostNotInAD = GetLeftOuterJoin(tblWithCleanMPReport.Copy(), "MP_Name", tblWithCleanADReport.Copy(), "name").Copy();
         }
@@ -1164,8 +1172,11 @@ namespace GUI_SecChecker_v2
         /// </summary>
         private void GetTblWithCleanMPReport()
         {
+            delUpdateUITextBox DelUpdateUItextBox = new delUpdateUITextBox(UpdateUITextBox);
             tblWithMPReport = new DataTable();
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Получение данных из MP...");
             tblWithMPReport = ReadMPReportToDataTable(MergeCSVInFolder(tb_PathMPReport.Text));
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Обработка данных из MP...");
             tblWithCleanMPReport = RemoveDuplicateAndRowsWithEmptyNameFromMPReport().Copy();
         }
 
@@ -1174,10 +1185,17 @@ namespace GUI_SecChecker_v2
         /// </summary>
         private void GetTblWithCleanADReport()
         {
+            delUpdateUITextBox DelUpdateUItextBox = new delUpdateUITextBox(UpdateUITextBox);
             listDomain = tb_domain.Text.Split(';');
             tblWithADReport = new DataTable();
+            // TODO Убрать коммент и удалить строку с получением AD из файла
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Получение данных из AD...");
             tblWithADReport = GetComputersFromMultipleDomains(listDomain);
+            //tblWithADReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\AD"), ';');
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Обработка данных из AD...");
             tblWithCleanADReport = RemoveDuplicateAndDisableAndOldLastLogonFromADReport().Copy();
+
+            
         }
 
 
@@ -1191,8 +1209,12 @@ namespace GUI_SecChecker_v2
         private void bt_ExportMainResultToExcel_Click(object sender, EventArgs e)
         {
             XLWorkbook wb = new XLWorkbook();
-            wb.Worksheets.Add(tblWithAllHost, "WorksheetName");
-            wb.SaveAs("MainResult.xlsx");
+            wb.Worksheets.Add(tblWithAllHost, "Сводный отчет");
+            wb.SaveAs(reportPath = "\\" + "Сводный отчет.xlsx");
+
+            wb = new XLWorkbook();
+            wb.Worksheets.Add(tblWithAllHost, "Сводный отчет");
+            wb.SaveAs(reportPath = "\\" + "Сводный отчет.xlsx");
         }
 
         private void Form1_Shown(object sender, EventArgs e)
@@ -1202,78 +1224,173 @@ namespace GUI_SecChecker_v2
 
         void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            ////////////////////////////////////////////////////////////////////////////////////////////MP и AD\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-            ////Убрать коммент
-            GetTblWithCleanADReport();
+            delUpdateUITextBox DelUpdateUItextBox = new delUpdateUITextBox(UpdateUITextBox);
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Начало работы...");
 
+            Thread threadGetTblWithCleanADReport = new Thread(new ThreadStart(GetTblWithCleanADReport));
+            Thread threadGetTblWithCleanMPReport = new Thread(new ThreadStart(GetTblWithCleanMPReport));
+
+            threadGetTblWithCleanADReport.Start();
+            threadGetTblWithCleanMPReport.Start();
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Ожидание AD...");
+            threadGetTblWithCleanADReport.Join();
             backgroundWorker1.ReportProgress(5);
-            GetTblWithCleanMPReport();
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Ожидание MP...");
+            threadGetTblWithCleanMPReport.Join();
+            backgroundWorker1.ReportProgress(6);
 
-
-            GetTblWithHostNotInAD();
-
-            CreateTblForAllHost();
-
-            AddHostNotInADToAllHostTable();
+            GetTblWithHostNotInAD(); //по порядку
+            backgroundWorker1.ReportProgress(7);
+            CreateTblForAllHost(); //по порядку
+            backgroundWorker1.ReportProgress(8);
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Добавление хостов не в AD в общий список хостов...");
+            AddHostNotInADToAllHostTable(); //по порядку
             backgroundWorker1.ReportProgress(10);
+
+            ////////////////////////////////////////////////////////////////////////////////////////////MP и AD\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+            
+
+
+
+
 
             ////////////////////////////////////////////////////////////////////////////////////////////ALL и KSC\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-            GetTblWithCleanKSCReport();
+            Thread threadGetHostNotInKSC = new Thread(new ThreadStart(For_Thread_GetHostNotInKSC));
 
-            GetTblWithHostNotInKSC();
+            
+            threadGetHostNotInKSC.Start();
 
+
+            Thread threadGetHostNotInSEP = new Thread(new ThreadStart(For_Thread_GetHostNotInSEP));
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Начата обработка SEP...");
+            threadGetHostNotInSEP.Start();
+
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Ожидание KES...");
+            threadGetHostNotInKSC.Join();
+            backgroundWorker1.ReportProgress(12);
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Ожидание SEP...");
+            threadGetHostNotInSEP.Join();
+            backgroundWorker1.ReportProgress(14);
+
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Добавления информации о хостах без KES в общий список...");
             AddInfoAboutHostNotInKSCToAllHostTable();
-
-
-            backgroundWorker1.ReportProgress(20);
-            ////////////////////////////////////////////////////////////////////////////////////////////ALL и SEP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-            GetTblWithCleanSEPReport();
-            GetTblWithHostNotInSEP();
+            backgroundWorker1.ReportProgress(16);
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Добавления информации о хостах без SEP в общий список...");
             AddInfoAboutHostNotInSEPToAllHostTable();
 
 
-            backgroundWorker1.ReportProgress(30);
+
+            backgroundWorker1.ReportProgress(20);
+            
+
+            ////////////////////////////////////////////////////////////////////////////////////////////ALL и SEP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            
+
+            
 
             ////////////////////////////////////////////////////////////////////////////////////////////ALL KES OLD BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+            Thread threadGetTblWithHostOldBaseAndClientKES = new Thread(new ThreadStart(For_Thread_GetHostOldBaseAndClientKES));
+            Thread threadGetTblWithHostOldBaseAndClientSEP = new Thread(new ThreadStart(For_Thread_GetHostOldBaseAndClientSEP));
 
-            GetTblWithHostOldBaseKES();
+
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Начата обработка старых баз и клиентов KES...");
+            threadGetTblWithHostOldBaseAndClientKES.Start();
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Начата обработка старых баз и клиентов SEP...");
+            threadGetTblWithHostOldBaseAndClientSEP.Start();
+
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Ожидание KES...");
+            threadGetTblWithHostOldBaseAndClientKES.Join();
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Ожидание SEP...");
+            threadGetTblWithHostOldBaseAndClientSEP.Join();
+
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Добавление инфы о старых базах и клиентов KES SEP...");
             AddInfoAboutHostOldBaseKESToAllHostTable();
+            AddInfoAboutHostOldBaseSEPToAllHostTable();
+            AddInfoAboutHostOldClientKESToAllHostTable();
+            AddInfoAboutHostOldClientSEPToAllHostTable();
+
             backgroundWorker1.ReportProgress(40);
             ////////////////////////////////////////////////////////////////////////////////////////////ALL SEP OLD BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-            GetTblWithHostOldBaseSEP();
-            AddInfoAboutHostOldBaseSEPToAllHostTable();
-            backgroundWorker1.ReportProgress(50);
+            
+
+
+            
             ////////////////////////////////////////////////////////////////////////////////////////////ALL KES OLD Client\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-            GetTblWithHostOldClientKES();
-            AddInfoAboutHostOldClientKESToAllHostTable();
+            
+            
             backgroundWorker1.ReportProgress(60);
             ////////////////////////////////////////////////////////////////////////////////////////////ALL SEP OLD Client\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-            GetTblWithHostOldClientSEP();
-            AddInfoAboutHostOldClientSEPToAllHostTable();
+            
+            
 
             backgroundWorker1.ReportProgress(70);
 
             ////////////////////////////////////////////////////////////////////////////////////////////ALL SCCM\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Обработка SCCM...");
             GetTblWithCleanSCCMReport();
 
             AddInfoAboutHostNotInSCCMToAllHostTable();
             backgroundWorker1.ReportProgress(100);
+
+            MessageBox.Show("Complete");
 
 
 
 
         }
 
+        private void For_Thread_GetHostOldBaseAndClientSEP()
+        {
+            delUpdateUITextBox DelUpdateUItextBox = new delUpdateUITextBox(UpdateUITextBox);
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Получение хостов со старыми базами из SEP...");
+            GetTblWithHostOldBaseSEP();
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Получение хостов со старыми клиентами из SEP...");
+            GetTblWithHostOldClientSEP();
+        }
+
+        private void For_Thread_GetHostOldBaseAndClientKES()
+        {
+            delUpdateUITextBox DelUpdateUItextBox = new delUpdateUITextBox(UpdateUITextBox);
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Получение хостов со старыми базами из KES...");
+            GetTblWithHostOldBaseKES();
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Получение хостов со старыми клиентами из KES...");
+            GetTblWithHostOldClientKES();
+        }
+
+        private void For_Thread_GetHostNotInSEP()
+        {
+            delUpdateUITextBox DelUpdateUItextBox = new delUpdateUITextBox(UpdateUITextBox);
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Получение данных из SEP...");
+            GetTblWithCleanSEPReport();
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Получение хостов без SEP...");
+            GetTblWithHostNotInSEP();
+        }
+
+        private void For_Thread_GetHostNotInKSC()
+        {
+            delUpdateUITextBox DelUpdateUItextBox = new delUpdateUITextBox(UpdateUITextBox);
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Получение данных из KSC...");
+            GetTblWithCleanKSCReport();
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Получение хостов без KSC...");
+            GetTblWithHostNotInKSC();
+        }
+
+        public void UpdateUITextBox(string textBoxString)
+        {
+            this.lb_Status.Text = textBoxString;
+        }
+
         void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             // The progress percentage is a property of e
-            progressBar1.Value = e.ProgressPercentage;
+            progressBar1.Value = e.ProgressPercentage;            
         }
     }
 }

@@ -23,7 +23,8 @@ namespace GUI_SecChecker_v2
         string currPath = Environment.CurrentDirectory;
         string tempPath = Environment.CurrentDirectory + "\\" + "Temp";
         string reportPath = Environment.CurrentDirectory + "\\" + "Report";
-        string[] listDomain;
+        string fileNameReportTemplate = "report_template.xlsx";
+        
 
         //Делегаты для отрисовки интерфейса
         public delegate void delUpdateUITextBox(string text);
@@ -40,7 +41,8 @@ namespace GUI_SecChecker_v2
 
         TimeSpan daySpan10 = new TimeSpan(10, 0, 0, 0);
 
-        string dateFormatForAD = "yyyy.MM.dd HH.mm";
+        string dateFormatForAD_File = "yyyy-MM-dd";
+        string dateFormatForAD_Net = "yyyy.MM.dd";
 
         string dateFormatForKSC = "dd.MM.yyyy";
 
@@ -49,6 +51,8 @@ namespace GUI_SecChecker_v2
         string dateFormatForSEPBase = "yyyy-MM-dd";
 
         string dateFormatForSCCM = "dd.MM.yyyy";
+
+        string[] listDomain;
 
         ///////////////////////////////////Переменые для Обработанных Данных/////////////////
         DataTable tblWithCleanMPReport;
@@ -60,14 +64,41 @@ namespace GUI_SecChecker_v2
 
         ///////////////////////////////////Переменые для Отчетности/////////////////
         DataTable tblWithAllHost;
+        DataTable tblWithAllARM_NotIB;
+        DataTable tblWithAllSERV_NotIB;
         DataTable tblWithHostNotInAD;
         DataTable tblWithHostWithoutKES;
         DataTable tblWithHostWithoutSEP;
+        DataTable tblWithHostWithoutAVPO;
         DataTable tblWithHostOldBaseKES;
         DataTable tblWithHostOldBaseSEP;
         DataTable tblWithHostOldClientKES;
         DataTable tblWithHostOldClientSEP;
-        //DataTable tblWithHostWithoutSCCM;
+        /////////////////////////////////////////////Переменные для отчетности с сортиовкой на АРМ и Сервера\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+        ////////////////////////////////////////////////АРМ\\\\\\\\\\\\\\\\\\\\\\\\\\
+        DataTable tblWithHostNotInAD_ARM;
+        DataTable tblWithHostWithoutKES_ARM;
+        DataTable tblWithHostWithoutSEP_ARM;
+        DataTable tblWithHostWithoutAVPO_ARM;
+        DataTable tblWithHostOldBaseKES_ARM;
+        DataTable tblWithHostOldBaseSEP_ARM;
+        DataTable tblWithHostOldClientKES_ARM;
+        DataTable tblWithHostOldClientSEP_ARM;
+        DataTable tblWithCleanSCCMReport_ARM;
+        
+        ////////////////////////////////////////////////Сервера\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        DataTable tblWithHostNotInAD_SERV;
+        DataTable tblWithHostWithoutKES_SERV;
+        DataTable tblWithHostWithoutSEP_SERV;
+        DataTable tblWithHostWithoutAVPO_SERV;
+        DataTable tblWithHostOldBaseKES_SERV;
+        DataTable tblWithHostOldBaseSEP_SERV;
+        DataTable tblWithHostOldClientKES_SERV;
+        DataTable tblWithHostOldClientSEP_SERV;
+        DataTable tblWithCleanSCCMReport_SERV;
+
+
 
 
 
@@ -117,8 +148,18 @@ namespace GUI_SecChecker_v2
             for (int i = 0; i < _listDomain.Length; i++)
             {
                 adComp = new DataTable();
-                adComp = GetComputers(_listDomain[i], tb_login.Text, tb_pass.Text);
-                _tblWithCompAD.Merge(adComp);
+                try
+                {
+                    adComp = GetComputers(_listDomain[i], tb_login.Text, tb_pass.Text);
+                    _tblWithCompAD.Merge(adComp);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message + _listDomain[i]);
+                    MessageBox.Show(ex.ToString());
+                    
+                }
+                
             }
 
             return _tblWithCompAD;
@@ -393,6 +434,7 @@ namespace GUI_SecChecker_v2
                 if (dt.Rows[i][colName].ToString().Contains(searchWord))
                 {
                     dt.Rows[i].Delete();
+                     
                 }
 
             }
@@ -411,6 +453,7 @@ namespace GUI_SecChecker_v2
                 if (dt.Rows[i][colName].ToString() == searchWord)
                 {
                     dt.Rows[i].Delete();
+                     
                 }
 
             }
@@ -436,6 +479,7 @@ namespace GUI_SecChecker_v2
                     if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString(), dateFormat, CultureInfo.InvariantCulture) > daySpan)
                     {
                         dt.Rows[i].Delete();
+                         
                     }
                 }
                 else
@@ -446,10 +490,13 @@ namespace GUI_SecChecker_v2
                     {
                         if (DateTime.TryParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out debugDT))
                         {
-
+                            TimeSpan debugTimeSpan = new TimeSpan();
+                            string datetimeCur = DateTime.ParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture).ToString();
+                            debugTimeSpan = DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture);
                             if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture) > daySpan)
                             {
                                 dt.Rows[i].Delete();
+                                 
                             }
                         }
                     }
@@ -480,6 +527,7 @@ namespace GUI_SecChecker_v2
                     if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString(), dateFormat, CultureInfo.InvariantCulture) < daySpan)
                     {
                         dt.Rows[i].Delete();
+                         
                     }
                 }
                 else
@@ -494,6 +542,7 @@ namespace GUI_SecChecker_v2
                             if (DateTime.Now - DateTime.ParseExact(dt.Rows[i][colName].ToString().Remove(spaceIndex), dateFormat, CultureInfo.InvariantCulture) < daySpan)
                             {
                                 dt.Rows[i].Delete();
+                                 
                             }
                         }
                     }
@@ -557,10 +606,12 @@ namespace GUI_SecChecker_v2
                 if (dt.Rows[i]["MP_Name"].ToString() == "null" && dt.Rows[i]["MP_NameFull"].ToString() == "null")
                 {
                     dt.Rows[i].Delete();
+                     
                 }
                 if (dt.Rows[i]["MP_Name"].ToString() == "" && dt.Rows[i]["MP_NameFull"].ToString() == "")
                 {
                     dt.Rows[i].Delete();
+                     
                 }
 
             }
@@ -597,14 +648,17 @@ namespace GUI_SecChecker_v2
             _tblWithCleanADReport = RemoveDuplicateRows(_tblWithCleanADReport, "name");
             if (!chb_ADFromFile.Checked)
             {
+                //_tblWithCleanADReport = RemoveRowsContainsSpecificWordInColumn(_tblWithCleanADReport, "Disabled", "True");
                 _tblWithCleanADReport = RemoveRowsContainsSpecificWordInColumn(_tblWithCleanADReport, "Disabled", "True");
+                _tblWithCleanADReport = RemoveRowsWithDateOldestTimeSpan(_tblWithCleanADReport, "LastLogonTimeStamp", daySpan30, dateFormatForAD_Net);
             }
             else
             {
                 _tblWithCleanADReport = RemoveRowsContainsSpecificWordInColumn(_tblWithCleanADReport, "Enabled", "False");
+                _tblWithCleanADReport = RemoveRowsWithDateOldestTimeSpan(_tblWithCleanADReport, "LastLogonTimeStamp", daySpan30, dateFormatForAD_File);
             }
 
-            _tblWithCleanADReport = RemoveRowsWithDateOldestTimeSpan(_tblWithCleanADReport, "LastLogonTimeStamp", daySpan30, dateFormatForAD);
+            
 
 
             return _tblWithCleanADReport;
@@ -844,7 +898,11 @@ namespace GUI_SecChecker_v2
 
             DateTime timeStart = DateTime.Now;
             DeleteFileInDir(tempPath);
+
+            
+            listDomain = this.cmb_domain.Text.Split(';');
             backgroundWorker1.RunWorkerAsync();
+
 
             
 
@@ -1192,12 +1250,21 @@ namespace GUI_SecChecker_v2
         private void GetTblWithCleanADReport()
         {
             delUpdateUITextBox DelUpdateUItextBox = new delUpdateUITextBox(UpdateUITextBox);
-            listDomain = tb_domain.Text.Split(';');
+            //listDomain = tb_domain.Text.Split(';');
+            //listDomain = this.cmb_domain.SelectedText.Split(';');
             tblWithADReport = new DataTable();
             // TODO Убрать коммент и удалить строку с получением AD из файла
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Получение данных из AD...");
-            tblWithADReport = GetComputersFromMultipleDomains(listDomain);
-            //tblWithADReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(@"C:\Users\KartashevVS\Desktop\2016-10-21\2016-11-15\SZB\AD"), ';');
+            if (!chb_ADFromFile.Checked)
+            {
+                tblWithADReport = GetComputersFromMultipleDomains(listDomain);
+            }
+            else
+            {
+                tblWithADReport = ReadCSVWithHeadersToDataTable(MergeCSVInFolder(tb_PathADReport.Text), ';');
+            }
+            
+            
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Обработка данных из AD...");
             tblWithCleanADReport = RemoveDuplicateAndDisableAndOldLastLogonFromADReport().Copy();
 
@@ -1214,19 +1281,22 @@ namespace GUI_SecChecker_v2
 
         private void bt_ExportMainResultToExcel_Click(object sender, EventArgs e)
         {
+            //string path = tb_PathSumReport.Text + "\\" + "Сводный отчет.xlsx";
             XLWorkbook wb = new XLWorkbook();
             wb.Worksheets.Add(tblWithAllHost, "Сводный отчет");
-            wb.SaveAs(reportPath = "\\" + "Сводный отчет.xlsx");
+            wb.SaveAs(tb_PathSumReport.Text + "\\" + "Сводный отчет.xlsx");
 
-            wb = new XLWorkbook();
-            wb.Worksheets.Add(tblWithAllHost, "Сводный отчет");
-            wb.SaveAs(reportPath = "\\" + "Сводный отчет.xlsx");
+            //wb = new XLWorkbook();
+            //wb.Worksheets.Add(tblWithAllHost, "Сводный отчет");
+            //wb.SaveAs(reportPath = "\\" + "Сводный отчет.xlsx");
         }
 
         private void Form1_Shown(object sender, EventArgs e)
         {
             
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////Основной ПОТОК\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
         void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -1240,18 +1310,18 @@ namespace GUI_SecChecker_v2
             threadGetTblWithCleanMPReport.Start();
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Ожидание AD...");
             threadGetTblWithCleanADReport.Join();
-            backgroundWorker1.ReportProgress(5);
+            backgroundWorker1.ReportProgress(10);
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Ожидание MP...");
             threadGetTblWithCleanMPReport.Join();
-            backgroundWorker1.ReportProgress(6);
+            backgroundWorker1.ReportProgress(15);
 
             GetTblWithHostNotInAD(); //по порядку
-            backgroundWorker1.ReportProgress(7);
+            backgroundWorker1.ReportProgress(20);
             CreateTblForAllHost(); //по порядку
-            backgroundWorker1.ReportProgress(8);
+            backgroundWorker1.ReportProgress(25);
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Добавление хостов не в AD в общий список хостов...");
             AddHostNotInADToAllHostTable(); //по порядку
-            backgroundWorker1.ReportProgress(10);
+            backgroundWorker1.ReportProgress(30);
 
             ////////////////////////////////////////////////////////////////////////////////////////////MP и AD\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -1272,24 +1342,34 @@ namespace GUI_SecChecker_v2
 
             Thread threadGetHostNotInSEP = new Thread(new ThreadStart(For_Thread_GetHostNotInSEP));
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Начата обработка SEP...");
+            backgroundWorker1.ReportProgress(35);
             threadGetHostNotInSEP.Start();
 
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Ожидание KES...");
+            backgroundWorker1.ReportProgress(40);
             threadGetHostNotInKSC.Join();
-            backgroundWorker1.ReportProgress(12);
+            
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Ожидание SEP...");
             threadGetHostNotInSEP.Join();
-            backgroundWorker1.ReportProgress(14);
+            backgroundWorker1.ReportProgress(45);
+
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Получение списка хостов без АВПО");
+            Thread threadGetHostWithoutAVPO = new Thread(new ThreadStart(For_Thread_GetHostWithoutAVPO));
+            threadGetHostWithoutAVPO.Start();
+            
+
+
 
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Добавления информации о хостах без KES в общий список...");
             AddInfoAboutHostNotInKSCToAllHostTable();
-            backgroundWorker1.ReportProgress(16);
+            backgroundWorker1.ReportProgress(50);
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Добавления информации о хостах без SEP в общий список...");
+            backgroundWorker1.ReportProgress(55);
             AddInfoAboutHostNotInSEPToAllHostTable();
 
 
 
-            backgroundWorker1.ReportProgress(20);
+            backgroundWorker1.ReportProgress(60);
             
 
             ////////////////////////////////////////////////////////////////////////////////////////////ALL и SEP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -1304,22 +1384,27 @@ namespace GUI_SecChecker_v2
 
 
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Начата обработка старых баз и клиентов KES...");
+            backgroundWorker1.ReportProgress(65);
             threadGetTblWithHostOldBaseAndClientKES.Start();
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Начата обработка старых баз и клиентов SEP...");
+            backgroundWorker1.ReportProgress(70);
             threadGetTblWithHostOldBaseAndClientSEP.Start();
 
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Ожидание KES...");
+            backgroundWorker1.ReportProgress(75);
             threadGetTblWithHostOldBaseAndClientKES.Join();
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Ожидание SEP...");
+            backgroundWorker1.ReportProgress(80);
             threadGetTblWithHostOldBaseAndClientSEP.Join();
 
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Добавление инфы о старых базах и клиентов KES SEP...");
+            backgroundWorker1.ReportProgress(85);
             AddInfoAboutHostOldBaseKESToAllHostTable();
             AddInfoAboutHostOldBaseSEPToAllHostTable();
             AddInfoAboutHostOldClientKESToAllHostTable();
             AddInfoAboutHostOldClientSEPToAllHostTable();
 
-            backgroundWorker1.ReportProgress(40);
+            backgroundWorker1.ReportProgress(90);
             ////////////////////////////////////////////////////////////////////////////////////////////ALL SEP OLD BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
             
@@ -1330,33 +1415,81 @@ namespace GUI_SecChecker_v2
 
             
             
-            backgroundWorker1.ReportProgress(60);
+
             ////////////////////////////////////////////////////////////////////////////////////////////ALL SEP OLD Client\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
             
             
 
-            backgroundWorker1.ReportProgress(70);
 
             ////////////////////////////////////////////////////////////////////////////////////////////ALL SCCM\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
             this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Обработка SCCM...");
+            backgroundWorker1.ReportProgress(90);
             GetTblWithCleanSCCMReport();
 
             AddInfoAboutHostNotInSCCMToAllHostTable();
             backgroundWorker1.ReportProgress(100);
 
-            DateTime timeStop = DateTime.Now;
-            lb_TimeStop.Text = DateTime.Now.ToShortTimeString();
+            //DateTime timeStop = DateTime.Now;
+            //lb_TimeStop.Text = DateTime.Now.ToShortTimeString(); //TODO запись через переменную глобальную
 
             //TimeSpan timeAll = timeStop - timeStart;
 
             //lb_WorkingTime.Text = timeAll.TotalMinutes.ToString();
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Ожидание получения списка хостов без АВПО...");
+            threadGetHostWithoutAVPO.Join();
+
+            //SortArmAndServ();
+            SortArmAndServ();
+            SaveAllReportsToExcel();
+
+            this.lb_Status.BeginInvoke(DelUpdateUItextBox, "Готово!");
 
             MessageBox.Show("Complete " + DateTime.Now.ToShortTimeString());
 
 
 
 
+        }
+
+        private void For_Thread_GetHostWithoutAVPO()
+        {
+            tblWithHostWithoutAVPO = new DataTable();
+            tblWithHostWithoutAVPO.Columns.Add("Name");
+            tblWithHostWithoutAVPO.Columns.Add("operatingSystem");
+            DataRow _rowWithoutAVPO = tblWithHostWithoutAVPO.NewRow();
+
+            for (int i = 0; i < tblWithHostWithoutKES.Rows.Count; i++)
+            {
+                _rowWithoutAVPO = tblWithHostWithoutAVPO.NewRow();
+                _rowWithoutAVPO["Name"] = tblWithHostWithoutKES.Rows[i]["name"];
+                _rowWithoutAVPO["operatingSystem"] = tblWithHostWithoutKES.Rows[i]["operatingSystem"];
+                tblWithHostWithoutAVPO.Rows.Add(_rowWithoutAVPO);
+            }
+
+            if (tblWithHostWithoutKES.Columns.Contains("Computer Name"))
+            {
+                for (int i = 0; i < tblWithHostWithoutSEP.Rows.Count; i++)
+                {
+                    _rowWithoutAVPO = tblWithHostWithoutAVPO.NewRow();
+                    _rowWithoutAVPO["Name"] = tblWithHostWithoutKES.Rows[i]["Computer Name"];
+                    _rowWithoutAVPO["operatingSystem"] = tblWithHostWithoutKES.Rows[i]["operatingSystem"];
+                    tblWithHostWithoutAVPO.Rows.Add(_rowWithoutAVPO);
+                }
+            }
+
+            if (tblWithHostWithoutKES.Columns.Contains("Имя компьютера"))
+            {
+                for (int i = 0; i < tblWithHostWithoutSEP.Rows.Count; i++)
+                {
+                    _rowWithoutAVPO = tblWithHostWithoutAVPO.NewRow();
+                    _rowWithoutAVPO["Name"] = tblWithHostWithoutKES.Rows[i]["Имя компьютера"];
+                    _rowWithoutAVPO["operatingSystem"] = tblWithHostWithoutKES.Rows[i]["operatingSystem"];
+                    tblWithHostWithoutAVPO.Rows.Add(_rowWithoutAVPO);
+                }
+            }
+
+            tblWithHostWithoutAVPO = RemoveDuplicateRows(tblWithHostWithoutAVPO.Copy(), "Name");
         }
 
         private void For_Thread_GetHostOldBaseAndClientSEP()
@@ -1404,6 +1537,544 @@ namespace GUI_SecChecker_v2
         {
             // The progress percentage is a property of e
             progressBar1.Value = e.ProgressPercentage;            
+        }
+
+        private void bt_BrowseSumReport_Click(object sender, EventArgs e)
+        {
+            var dlg = new FolderBrowserDialog();
+            if (dlg.ShowDialog() != DialogResult.OK)
+                return;
+            tb_PathSumReport.Text = dlg.SelectedPath;
+            bt_ExportMainResultToExcel.Enabled = true;
+        }
+
+        private void chb_ADFromFile_CheckStateChanged(object sender, EventArgs e)
+        {
+            if (!tb_PathADReport.Enabled)
+            {
+                tb_PathADReport.Enabled = true;
+                bt_BrowseADReport.Enabled = true;
+                tb_domain.Enabled = false;
+                cmb_domain.Enabled = false;
+                tb_login.Enabled = false;
+                tb_pass.Enabled = false;
+
+            }
+            else
+            {
+                tb_PathADReport.Enabled = false;
+                bt_BrowseADReport.Enabled = false;
+                tb_domain.Enabled = true;
+                cmb_domain.Enabled = true;
+                tb_login.Enabled = true;
+                tb_pass.Enabled = true;
+            }
+        }
+
+        private void bt_BrowseADReport_Click(object sender, EventArgs e)
+        {
+            var dlg = new FolderBrowserDialog();
+            if (dlg.ShowDialog() != DialogResult.OK)
+                return;
+            tb_PathADReport.Text = dlg.SelectedPath;
+        }
+
+        private void bt_ExportEachResultToExcel_Click(object sender, EventArgs e)
+        {
+
+
+            SaveAllReportsToExcel();
+        }
+
+        private void SaveAllReportsToExcel()
+        {
+            var workbook = new XLWorkbook(fileNameReportTemplate);
+            var ws1 = workbook.Worksheet(1);
+
+            ws1.Cell("B4").Value = tblWithAllHost.Select("operatingSystem NOT LIKE '%Server%'").Length;
+            ws1.Cell("D4").Value = tblWithHostNotInAD_ARM.Rows.Count;
+            ws1.Cell("E4").Value = tblWithCleanSCCMReport_ARM.Rows.Count;
+            ws1.Cell("F4").Value = tblWithHostWithoutAVPO_ARM.Rows.Count;
+            ws1.Cell("G4").Value = tblWithHostOldClientKES_ARM.Rows.Count + tblWithHostOldClientSEP_ARM.Rows.Count;
+            ws1.Cell("H4").Value = tblWithHostOldBaseKES_ARM.Rows.Count + tblWithHostOldBaseSEP_ARM.Rows.Count;
+
+            GetTblWithAllARM_NotIB();
+
+            ws1.Cell("I4").Value = tblWithAllARM_NotIB.Rows.Count; ////////Подсчет общего кол-ва АРМ не сотв ИБ
+
+
+
+            ws1 = workbook.Worksheet(2);
+            ws1.Cell("B4").Value = tblWithAllHost.Select("operatingSystem LIKE '%Server%'").Length;
+            ws1.Cell("D4").Value = tblWithHostNotInAD_SERV.Rows.Count;
+            ws1.Cell("E4").Value = tblWithCleanSCCMReport_SERV.Rows.Count;
+            ws1.Cell("F4").Value = tblWithHostWithoutAVPO_SERV.Rows.Count;
+            ws1.Cell("G4").Value = tblWithHostOldClientKES_SERV.Rows.Count + tblWithHostOldClientSEP_SERV.Rows.Count;
+            ws1.Cell("H4").Value = tblWithHostOldBaseKES_SERV.Rows.Count + tblWithHostOldBaseSEP_SERV.Rows.Count;
+
+            GetTblWithAllSERV_NotIB();
+
+            ws1.Cell("I4").Value = tblWithAllSERV_NotIB.Rows.Count; ////////Подсчет общего кол-ва СЕРВ не сотв ИБ
+
+            workbook.SaveAs(tb_PathSumReport.Text + "\\" + "Отчет числовой.xlsx");
+
+            XLWorkbook wb = new XLWorkbook();
+            wb.Worksheets.Add(tblWithAllHost, "Сводный отчет");
+            wb.Worksheets.Add(tblWithHostNotInAD, "Не в AD");
+            wb.Worksheets.Add(tblWithCleanSCCMReport, "Без SCCM");
+            wb.Worksheets.Add(tblWithHostWithoutKES, "Без KES");
+            wb.Worksheets.Add(tblWithHostWithoutSEP, "Без SEP");
+
+            wb.Worksheets.Add(tblWithHostWithoutAVPO, "Без АВПО");
+
+            wb.Worksheets.Add(tblWithHostOldClientKES, "Старые клиенты KES");
+            wb.Worksheets.Add(tblWithHostOldClientSEP, "Старые клиенты SEP");
+            wb.Worksheets.Add(tblWithHostOldBaseKES, "Старые базы KES");
+            wb.Worksheets.Add(tblWithHostOldBaseSEP, "Старые базы SEP");
+
+
+
+            wb.SaveAs(tb_PathSumReport.Text + "\\" + "Сводный отчет2.xlsx");
+
+
+
+
+            wb = new XLWorkbook();
+            wb.Worksheets.Add(tblWithAllHost, "Сводный отчет");
+            wb.Worksheets.Add(tblWithHostNotInAD_ARM, "Не в AD");
+            wb.Worksheets.Add(tblWithCleanSCCMReport_ARM, "Без SCCM");
+            wb.Worksheets.Add(tblWithHostWithoutKES_ARM, "Без KES");
+            wb.Worksheets.Add(tblWithHostWithoutSEP_ARM, "Без SEP");
+
+            wb.Worksheets.Add(tblWithHostWithoutAVPO_ARM, "Без АВПО");
+
+            wb.Worksheets.Add(tblWithHostOldClientKES_ARM, "Старые клиенты KES");
+            wb.Worksheets.Add(tblWithHostOldClientSEP_ARM, "Старые клиенты SEP");
+            wb.Worksheets.Add(tblWithHostOldBaseKES_ARM, "Старые базы KES");
+            wb.Worksheets.Add(tblWithHostOldBaseSEP_ARM, "Старые базы SEP");
+
+
+
+            wb.SaveAs(tb_PathSumReport.Text + "\\" + "Сводный отчет_АРМ.xlsx");
+
+
+            wb = new XLWorkbook();
+            wb.Worksheets.Add(tblWithAllHost, "Сводный отчет");
+            wb.Worksheets.Add(tblWithHostNotInAD_SERV, "Не в AD");
+            wb.Worksheets.Add(tblWithCleanSCCMReport_SERV, "Без SCCM");
+            wb.Worksheets.Add(tblWithHostWithoutKES_SERV, "Без KES");
+            wb.Worksheets.Add(tblWithHostWithoutSEP_SERV, "Без SEP");
+
+            wb.Worksheets.Add(tblWithHostWithoutAVPO_SERV, "Без АВПО");
+
+            wb.Worksheets.Add(tblWithHostOldClientKES_SERV, "Старые клиенты KES");
+            wb.Worksheets.Add(tblWithHostOldClientSEP_SERV, "Старые клиенты SEP");
+            wb.Worksheets.Add(tblWithHostOldBaseKES_SERV, "Старые базы KES");
+            wb.Worksheets.Add(tblWithHostOldBaseSEP_SERV, "Старые базы SEP");
+
+
+
+            wb.SaveAs(tb_PathSumReport.Text + "\\" + "Сводный отчет_SERV.xlsx");
+        }
+
+        private void GetTblWithAllSERV_NotIB()
+        {
+            tblWithAllSERV_NotIB = new DataTable();
+            tblWithAllSERV_NotIB.Columns.Add("Name");
+            foreach (DataRow dr in tblWithHostNotInAD_SERV.Rows)
+            {
+
+                tblWithAllSERV_NotIB.Rows.Add(dr["MP_Name"].ToString().ToUpper());
+            }
+            foreach (DataRow dr in tblWithCleanSCCMReport_SERV.Rows)
+            {
+
+                tblWithAllSERV_NotIB.Rows.Add(dr["Name0"].ToString().ToUpper());
+            }
+            foreach (DataRow dr in tblWithHostWithoutAVPO_SERV.Rows)
+            {
+
+                tblWithAllSERV_NotIB.Rows.Add(dr["Name"].ToString().ToUpper());
+            }
+            foreach (DataRow dr in tblWithHostOldClientKES_SERV.Rows)
+            {
+
+                tblWithAllSERV_NotIB.Rows.Add(dr["Имя"].ToString().ToUpper());
+            }
+            foreach (DataRow dr in tblWithHostOldClientSEP_SERV.Rows)
+            {
+                if (tblWithHostOldClientSEP_SERV.Columns.Contains("Computer Name"))
+                {
+                    tblWithAllSERV_NotIB.Rows.Add(dr["Computer Name"].ToString().ToUpper());
+                }
+                if (tblWithHostOldClientSEP_SERV.Columns.Contains("Имя компьютера"))
+                {
+                    tblWithAllSERV_NotIB.Rows.Add(dr["Имя компьютера"].ToString().ToUpper());
+                }
+
+            }
+            foreach (DataRow dr in tblWithHostOldBaseKES_SERV.Rows)
+            {
+
+                tblWithAllSERV_NotIB.Rows.Add(dr["Имя"].ToString().ToUpper());
+            }
+            foreach (DataRow dr in tblWithHostOldBaseSEP_SERV.Rows)
+            {
+                if (tblWithHostOldBaseSEP_SERV.Columns.Contains("Computer Name"))
+                {
+                    tblWithAllSERV_NotIB.Rows.Add(dr["Computer Name"].ToString().ToUpper());
+                }
+                if (tblWithHostOldBaseSEP_SERV.Columns.Contains("Имя компьютера"))
+                {
+                    tblWithAllSERV_NotIB.Rows.Add(dr["Имя компьютера"].ToString().ToUpper());
+                }
+
+            }
+
+            tblWithAllSERV_NotIB = RemoveDuplicateRows(tblWithAllSERV_NotIB.Copy(), "Name");
+        }
+
+        private void GetTblWithAllARM_NotIB()
+        {
+            tblWithAllARM_NotIB = new DataTable();
+            tblWithAllARM_NotIB.Columns.Add("Name");
+            foreach (DataRow dr in tblWithHostNotInAD_ARM.Rows)
+            {
+
+                tblWithAllARM_NotIB.Rows.Add(dr["MP_Name"].ToString().ToUpper());
+            }
+            foreach (DataRow dr in tblWithCleanSCCMReport_ARM.Rows)
+            {
+
+                tblWithAllARM_NotIB.Rows.Add(dr["Name0"].ToString().ToUpper());
+            }
+            foreach (DataRow dr in tblWithHostWithoutAVPO_ARM.Rows)
+            {
+
+                tblWithAllARM_NotIB.Rows.Add(dr["Name"].ToString().ToUpper());
+            }
+            foreach (DataRow dr in tblWithHostOldClientKES_ARM.Rows)
+            {
+
+                tblWithAllARM_NotIB.Rows.Add(dr["Имя"].ToString().ToUpper());
+            }
+            foreach (DataRow dr in tblWithHostOldClientSEP_ARM.Rows)
+            {
+                if (tblWithHostOldClientSEP_ARM.Columns.Contains("Computer Name"))
+                {
+                    tblWithAllARM_NotIB.Rows.Add(dr["Computer Name"].ToString().ToUpper());
+                }
+                if (tblWithHostOldClientSEP_ARM.Columns.Contains("Имя компьютера"))
+                {
+                    tblWithAllARM_NotIB.Rows.Add(dr["Имя компьютера"].ToString().ToUpper());
+                }
+
+            }
+            foreach (DataRow dr in tblWithHostOldBaseKES_ARM.Rows)
+            {
+
+                tblWithAllARM_NotIB.Rows.Add(dr["Имя"].ToString().ToUpper());
+            }
+            foreach (DataRow dr in tblWithHostOldBaseSEP_ARM.Rows)
+            {
+                if (tblWithHostOldBaseSEP_ARM.Columns.Contains("Computer Name"))
+                {
+                    tblWithAllARM_NotIB.Rows.Add(dr["Computer Name"].ToString().ToUpper());
+                }
+                if (tblWithHostOldBaseSEP_ARM.Columns.Contains("Имя компьютера"))
+                {
+                    tblWithAllARM_NotIB.Rows.Add(dr["Имя компьютера"].ToString().ToUpper());
+                }
+
+            }
+
+            tblWithAllARM_NotIB = RemoveDuplicateRows(tblWithAllARM_NotIB.Copy(), "Name");
+        }
+
+        private void bt_SortArmAndServ_Click(object sender, EventArgs e)
+        {
+            
+
+
+        }
+
+        private void SortArmAndServ()
+        {
+            ////////////////////////////////////////////////////////////////////////NOT IN AD\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+            tblWithHostNotInAD_ARM = tblWithHostNotInAD.Clone();
+            tblWithHostNotInAD_SERV = tblWithHostNotInAD.Clone();
+
+            for (int i = 0; i < tblWithHostNotInAD.Rows.Count; i++)
+            {
+                if (tblWithHostNotInAD.Rows[i]["MP_OS"].ToString().Contains("Microsoft Windows"))
+                {
+                    if (tblWithHostNotInAD.Rows[i]["MP_OS"].ToString().Contains(" or "))
+                    {
+                        tblWithHostNotInAD_ARM.ImportRow(tblWithHostNotInAD.Rows[i]);
+                        
+                    }
+
+                    if (tblWithHostNotInAD.Rows[i]["MP_OS"].ToString().Contains("Server") && !tblWithHostNotInAD.Rows[i]["MP_OS"].ToString().Contains(" or "))
+                    {
+                        tblWithHostNotInAD_SERV.ImportRow(tblWithHostNotInAD.Rows[i]);
+                        
+                    }
+
+                    if (!tblWithHostNotInAD.Rows[i]["MP_OS"].ToString().Contains("Server") && !tblWithHostNotInAD.Rows[i]["MP_OS"].ToString().Contains(" or "))
+                    {
+                        tblWithHostNotInAD_ARM.ImportRow(tblWithHostNotInAD.Rows[i]);
+                        
+                    }
+                }
+
+                
+
+
+            }
+
+            ////////////////////////////////////////////////////////////////////////NOT SCCM\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            tblWithCleanSCCMReport_ARM = tblWithCleanSCCMReport.Clone();
+            tblWithCleanSCCMReport_SERV = tblWithCleanSCCMReport.Clone();
+
+            for (int i = 0; i < tblWithCleanSCCMReport.Rows.Count; i++)
+            {
+
+
+                if (tblWithCleanSCCMReport.Rows[i]["Operating_System_Name_and0"].ToString().Contains("Server"))
+                {
+                    tblWithCleanSCCMReport_SERV.ImportRow(tblWithCleanSCCMReport.Rows[i]);
+                    
+                }
+
+                if (tblWithCleanSCCMReport.Rows[i]["Operating_System_Name_and0"].ToString().Contains("Workstation"))
+                {
+                    tblWithCleanSCCMReport_ARM.ImportRow(tblWithCleanSCCMReport.Rows[i]);
+                    
+                }
+
+
+            }
+
+            ////////////////////////////////////////////////////////////////////////NOT KES\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            tblWithHostWithoutKES_ARM = tblWithHostWithoutKES.Clone();
+            tblWithHostWithoutKES_SERV = tblWithHostWithoutKES.Clone();
+
+            for (int i = 0; i < tblWithHostWithoutKES.Rows.Count; i++)
+            {
+
+
+                if (tblWithHostWithoutKES.Rows[i]["operatingSystem"].ToString().Contains("Server"))
+                {
+                    tblWithHostWithoutKES_SERV.ImportRow(tblWithHostWithoutKES.Rows[i]);
+                    
+                }
+
+                if (!tblWithHostWithoutKES.Rows[i]["operatingSystem"].ToString().Contains("Server"))
+                {
+                    tblWithHostWithoutKES_ARM.ImportRow(tblWithHostWithoutKES.Rows[i]);
+                    
+                }
+
+
+            }
+
+
+            ////////////////////////////////////////////////////////////////////////NOT SEP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            tblWithHostWithoutSEP_ARM = tblWithHostWithoutSEP.Clone();
+            tblWithHostWithoutSEP_SERV = tblWithHostWithoutSEP.Clone();
+
+            for (int i = 0; i < tblWithHostWithoutSEP.Rows.Count; i++)
+            {
+
+
+                if (tblWithHostWithoutSEP.Rows[i]["operatingSystem"].ToString().Contains("Server"))
+                {
+                    tblWithHostWithoutSEP_SERV.ImportRow(tblWithHostWithoutSEP.Rows[i]);
+                    
+                }
+
+                if (!tblWithHostWithoutSEP.Rows[i]["operatingSystem"].ToString().Contains("Server"))
+                {
+                    tblWithHostWithoutSEP_ARM.ImportRow(tblWithHostWithoutSEP.Rows[i]);
+                    
+                }
+
+
+            }
+
+            ////////////////////////////////////////////////////////////////////////NOT AVPO\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            tblWithHostWithoutAVPO_ARM = tblWithHostWithoutAVPO.Clone();
+            tblWithHostWithoutAVPO_SERV = tblWithHostWithoutAVPO.Clone();
+
+            for (int i = 0; i < tblWithHostWithoutAVPO.Rows.Count; i++)
+            {
+
+
+                if (tblWithHostWithoutAVPO.Rows[i]["operatingSystem"].ToString().Contains("Server"))
+                {
+                    tblWithHostWithoutAVPO_SERV.ImportRow(tblWithHostWithoutAVPO.Rows[i]);
+                    
+                }
+
+                if (!tblWithHostWithoutAVPO.Rows[i]["operatingSystem"].ToString().Contains("Server"))
+                {
+                    tblWithHostWithoutAVPO_ARM.ImportRow(tblWithHostWithoutAVPO.Rows[i]);
+                    
+                }
+
+
+            }
+
+            ////////////////////////////////////////////////////////////////////////OLD Client KES\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            tblWithHostOldClientKES_ARM = tblWithHostOldClientKES.Clone();
+            tblWithHostOldClientKES_SERV = tblWithHostOldClientKES.Clone();
+
+            for (int i = 0; i < tblWithHostOldClientKES.Rows.Count; i++)
+            {
+
+
+                if (tblWithHostOldClientKES.Rows[i]["Тип операционной системы"].ToString().Contains("Server"))
+                {
+                    tblWithHostOldClientKES_SERV.ImportRow(tblWithHostOldClientKES.Rows[i]);
+                    
+                }
+
+                if (!tblWithHostOldClientKES.Rows[i]["Тип операционной системы"].ToString().Contains("Server"))
+                {
+                    tblWithHostOldClientKES_ARM.ImportRow(tblWithHostOldClientKES.Rows[i]);
+                    
+                }
+
+
+            }
+
+            ////////////////////////////////////////////////////////////////////////OLD Client SEP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            tblWithHostOldClientSEP_ARM = tblWithHostOldClientSEP.Clone();
+            tblWithHostOldClientSEP_SERV = tblWithHostOldClientSEP.Clone();
+
+            if (tblWithHostOldClientSEP.Columns.Contains("Computer Name"))
+            {
+                for (int i = 0; i < tblWithHostOldClientSEP.Rows.Count; i++)
+                {
+
+
+                    if (tblWithHostOldClientSEP.Rows[i]["Operating System"].ToString().Contains("Server"))
+                    {
+                        tblWithHostOldClientSEP_SERV.ImportRow(tblWithHostOldClientSEP.Rows[i]);
+                        
+                    }
+
+                    if (!tblWithHostOldClientSEP.Rows[i]["Operating System"].ToString().Contains("Server"))
+                    {
+                        tblWithHostOldClientSEP_ARM.ImportRow(tblWithHostOldClientSEP.Rows[i]);
+                        
+                    }
+
+
+                }
+            }
+
+            if (tblWithHostOldClientSEP.Columns.Contains("Имя компьютера"))
+            {
+                for (int i = 0; i < tblWithHostOldClientSEP.Rows.Count; i++)
+                {
+
+
+                    if (tblWithHostOldClientSEP.Rows[i]["Операционная система"].ToString().Contains("Server"))
+                    {
+                        tblWithHostOldClientSEP_SERV.ImportRow(tblWithHostOldClientSEP.Rows[i]);
+                        
+                    }
+
+                    if (!tblWithHostOldClientSEP.Rows[i]["Операционная система"].ToString().Contains("Server"))
+                    {
+                        tblWithHostOldClientSEP_ARM.ImportRow(tblWithHostOldClientSEP.Rows[i]);
+                        
+                    }
+
+
+                }
+            }
+
+
+            ////////////////////////////////////////////////////////////////////////OLD Base KES\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            tblWithHostOldBaseKES_ARM = tblWithHostOldBaseKES.Clone();
+            tblWithHostOldBaseKES_SERV = tblWithHostOldBaseKES.Clone();
+
+            for (int i = 0; i < tblWithHostOldBaseKES.Rows.Count; i++)
+            {
+
+
+                if (tblWithHostOldBaseKES.Rows[i]["Тип операционной системы"].ToString().Contains("Server"))
+                {
+                    tblWithHostOldBaseKES_SERV.ImportRow(tblWithHostOldBaseKES.Rows[i]);
+                    
+                }
+
+                if (!tblWithHostOldBaseKES.Rows[i]["Тип операционной системы"].ToString().Contains("Server"))
+                {
+                    tblWithHostOldBaseKES_ARM.ImportRow(tblWithHostOldBaseKES.Rows[i]);
+                    
+                }
+
+
+            }
+
+            ////////////////////////////////////////////////////////////////////////OLD Base SEP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+            tblWithHostOldBaseSEP_ARM = tblWithHostOldBaseSEP.Clone();
+            tblWithHostOldBaseSEP_SERV = tblWithHostOldBaseSEP.Clone();
+
+            if (tblWithHostOldBaseSEP.Columns.Contains("Computer Name"))
+            {
+                for (int i = 0; i < tblWithHostOldBaseSEP.Rows.Count; i++)
+                {
+
+
+                    if (tblWithHostOldBaseSEP.Rows[i]["Operating System"].ToString().Contains("Server"))
+                    {
+                        tblWithHostOldBaseSEP_SERV.ImportRow(tblWithHostOldBaseSEP.Rows[i]);
+                        
+                    }
+
+                    if (!tblWithHostOldBaseSEP.Rows[i]["Operating System"].ToString().Contains("Server"))
+                    {
+                        tblWithHostOldBaseSEP_ARM.ImportRow(tblWithHostOldBaseSEP.Rows[i]);
+                        
+                    }
+
+
+                }
+            }
+
+            if (tblWithHostOldBaseSEP.Columns.Contains("Имя компьютера"))
+            {
+                for (int i = 0; i < tblWithHostOldBaseSEP.Rows.Count; i++)
+                {
+
+
+                    if (tblWithHostOldBaseSEP.Rows[i]["Операционная система"].ToString().Contains("Server"))
+                    {
+                        tblWithHostOldBaseSEP_SERV.ImportRow(tblWithHostOldBaseSEP.Rows[i]);
+                        
+                    }
+
+                    if (!tblWithHostOldBaseSEP.Rows[i]["Операционная система"].ToString().Contains("Server"))
+                    {
+                        tblWithHostOldBaseSEP_ARM.ImportRow(tblWithHostOldBaseSEP.Rows[i]);
+                        
+                    }
+
+
+                }
+            }
         }
 
 

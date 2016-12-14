@@ -15,3 +15,12 @@ C:\Users\KartashevVS\Dropbox\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\De
 C:\Users\KartashevVS\Dropbox\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\Debug\GUI_SecChecker_v2.Properties.Resources.resources
 C:\Users\KartashevVS\Dropbox\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\Debug\GUI_SecChecker_v2.csproj.GenerateResource.Cache
 C:\Users\KartashevVS\Dropbox\Projects\SecChecker_v2\GUI_SecChecker_v2\bin\Debug\GUI_SecChecker_v2.exe.config
+Z:\Dropbox\Projects\SecChecker_v2\GUI_SecChecker_v2\bin\Debug\GUI_SecChecker_v2.exe.config
+Z:\Dropbox\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\Debug\GUI_SecChecker_v2.exe
+Z:\Dropbox\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\Debug\GUI_SecChecker_v2.pdb
+Z:\Dropbox\Projects\SecChecker_v2\GUI_SecChecker_v2\bin\Debug\GUI_SecChecker_v2.exe
+Z:\Dropbox\Projects\SecChecker_v2\GUI_SecChecker_v2\bin\Debug\GUI_SecChecker_v2.pdb
+Z:\Dropbox\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\Debug\GUI_SecChecker_v2.csprojResolveAssemblyReference.cache
+Z:\Dropbox\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\Debug\GUI_SecChecker_v2.Form1.resources
+Z:\Dropbox\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\Debug\GUI_SecChecker_v2.Properties.Resources.resources
+Z:\Dropbox\Projects\SecChecker_v2\GUI_SecChecker_v2\obj\x86\Debug\GUI_SecChecker_v2.csproj.GenerateResource.Cache

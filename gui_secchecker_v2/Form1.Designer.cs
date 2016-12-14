@@ -69,6 +69,14 @@
             this.lb_TimeStop = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.lb_WorkingTime = new System.Windows.Forms.Label();
+            this.tb_PathSumReport = new System.Windows.Forms.TextBox();
+            this.bt_BrowseSumReport = new System.Windows.Forms.Button();
+            this.tb_PathADReport = new System.Windows.Forms.TextBox();
+            this.bt_BrowseADReport = new System.Windows.Forms.Button();
+            this.cmb_domain = new System.Windows.Forms.ComboBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.bt_ExportEachResultToExcel = new System.Windows.Forms.Button();
+            this.bt_SortArmAndServ = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label4
@@ -113,7 +121,7 @@
             this.tb_pass.Name = "tb_pass";
             this.tb_pass.Size = new System.Drawing.Size(100, 20);
             this.tb_pass.TabIndex = 5;
-            this.tb_pass.Text = "VS1997vs";
+            this.tb_pass.Text = "VS2000vs";
             // 
             // tb_domain
             // 
@@ -121,7 +129,7 @@
             this.tb_domain.Name = "tb_domain";
             this.tb_domain.Size = new System.Drawing.Size(100, 20);
             this.tb_domain.TabIndex = 6;
-            this.tb_domain.Text = "szbsbrf";
+            this.tb_domain.Text = "alpha";
             // 
             // tb_login
             // 
@@ -129,10 +137,11 @@
             this.tb_login.Name = "tb_login";
             this.tb_login.Size = new System.Drawing.Size(100, 20);
             this.tb_login.TabIndex = 7;
-            this.tb_login.Text = "KartashevVS";
+            this.tb_login.Text = "alpha\\Kartashev1-VS";
             // 
             // bt_GetDataAD
             // 
+            this.bt_GetDataAD.Enabled = false;
             this.bt_GetDataAD.Location = new System.Drawing.Point(207, 134);
             this.bt_GetDataAD.Name = "bt_GetDataAD";
             this.bt_GetDataAD.Size = new System.Drawing.Size(100, 23);
@@ -165,7 +174,7 @@
             this.tb_PathMPReport.Name = "tb_PathMPReport";
             this.tb_PathMPReport.Size = new System.Drawing.Size(209, 20);
             this.tb_PathMPReport.TabIndex = 15;
-            this.tb_PathMPReport.Text = "C:\\Users\\KartashevVS\\Desktop\\2016-10-21\\2016-11-15\\SZB\\AD";
+            this.tb_PathMPReport.Text = "C:\\Users\\KartashevVS\\Desktop\\2016-11-21\\SZB\\MP";
             // 
             // label8
             // 
@@ -210,6 +219,7 @@
             this.tb_PathKSCReport.Name = "tb_PathKSCReport";
             this.tb_PathKSCReport.Size = new System.Drawing.Size(209, 20);
             this.tb_PathKSCReport.TabIndex = 15;
+            this.tb_PathKSCReport.Text = "C:\\Users\\KartashevVS\\Desktop\\2016-11-21\\SZB\\KES";
             // 
             // bt_BrowseKSCReport
             // 
@@ -245,6 +255,7 @@
             this.tb_PathSEPReport.Name = "tb_PathSEPReport";
             this.tb_PathSEPReport.Size = new System.Drawing.Size(209, 20);
             this.tb_PathSEPReport.TabIndex = 15;
+            this.tb_PathSEPReport.Text = "C:\\Users\\KartashevVS\\Desktop\\2016-11-21\\SZB\\SEP";
             // 
             // bt_BrowseSEPReport
             // 
@@ -280,6 +291,7 @@
             this.tb_PathSCCMReport.Name = "tb_PathSCCMReport";
             this.tb_PathSCCMReport.Size = new System.Drawing.Size(209, 20);
             this.tb_PathSCCMReport.TabIndex = 15;
+            this.tb_PathSCCMReport.Text = "C:\\Users\\KartashevVS\\Desktop\\2016-11-21\\SZB\\SCCM";
             // 
             // bt_BrowseSCCMReport
             // 
@@ -319,10 +331,12 @@
             this.chb_ADFromFile.TabIndex = 18;
             this.chb_ADFromFile.Text = "AD из Файла MP";
             this.chb_ADFromFile.UseVisualStyleBackColor = true;
+            this.chb_ADFromFile.CheckStateChanged += new System.EventHandler(this.chb_ADFromFile_CheckStateChanged);
             // 
             // bt_ExportMainResultToExcel
             // 
-            this.bt_ExportMainResultToExcel.Location = new System.Drawing.Point(795, 149);
+            this.bt_ExportMainResultToExcel.Enabled = false;
+            this.bt_ExportMainResultToExcel.Location = new System.Drawing.Point(795, 166);
             this.bt_ExportMainResultToExcel.Name = "bt_ExportMainResultToExcel";
             this.bt_ExportMainResultToExcel.Size = new System.Drawing.Size(75, 56);
             this.bt_ExportMainResultToExcel.TabIndex = 16;
@@ -405,11 +419,92 @@
             this.lb_WorkingTime.Size = new System.Drawing.Size(0, 13);
             this.lb_WorkingTime.TabIndex = 20;
             // 
+            // tb_PathSumReport
+            // 
+            this.tb_PathSumReport.Location = new System.Drawing.Point(12, 314);
+            this.tb_PathSumReport.Name = "tb_PathSumReport";
+            this.tb_PathSumReport.Size = new System.Drawing.Size(209, 20);
+            this.tb_PathSumReport.TabIndex = 15;
+            // 
+            // bt_BrowseSumReport
+            // 
+            this.bt_BrowseSumReport.Location = new System.Drawing.Point(248, 314);
+            this.bt_BrowseSumReport.Name = "bt_BrowseSumReport";
+            this.bt_BrowseSumReport.Size = new System.Drawing.Size(75, 23);
+            this.bt_BrowseSumReport.TabIndex = 16;
+            this.bt_BrowseSumReport.Text = "Browse";
+            this.bt_BrowseSumReport.UseVisualStyleBackColor = true;
+            this.bt_BrowseSumReport.Click += new System.EventHandler(this.bt_BrowseSumReport_Click);
+            // 
+            // tb_PathADReport
+            // 
+            this.tb_PathADReport.Enabled = false;
+            this.tb_PathADReport.Location = new System.Drawing.Point(12, 171);
+            this.tb_PathADReport.Name = "tb_PathADReport";
+            this.tb_PathADReport.Size = new System.Drawing.Size(209, 20);
+            this.tb_PathADReport.TabIndex = 15;
+            this.tb_PathADReport.Text = "C:\\Users\\KartashevVS\\Desktop\\2016-11-21\\SZB\\AD";
+            // 
+            // bt_BrowseADReport
+            // 
+            this.bt_BrowseADReport.Enabled = false;
+            this.bt_BrowseADReport.Location = new System.Drawing.Point(248, 169);
+            this.bt_BrowseADReport.Name = "bt_BrowseADReport";
+            this.bt_BrowseADReport.Size = new System.Drawing.Size(75, 23);
+            this.bt_BrowseADReport.TabIndex = 16;
+            this.bt_BrowseADReport.Text = "Browse";
+            this.bt_BrowseADReport.UseVisualStyleBackColor = true;
+            this.bt_BrowseADReport.Click += new System.EventHandler(this.bt_BrowseADReport_Click);
+            // 
+            // cmb_domain
+            // 
+            this.cmb_domain.FormattingEnabled = true;
+            this.cmb_domain.Items.AddRange(new object[] {
+            "hq.szb.sbrf.ru",
+            "Ab.srb.local;Tula.srb.local;Ryazan.srb.local;Smolensk.srb.local;Kaluga.srb.local;" +
+                "Bryansk.srb.local;Tver.srb.local",
+            "bel.cch.sbrf.ru"});
+            this.cmb_domain.Location = new System.Drawing.Point(314, 46);
+            this.cmb_domain.Name = "cmb_domain";
+            this.cmb_domain.Size = new System.Drawing.Size(121, 21);
+            this.cmb_domain.TabIndex = 21;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(9, 288);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(168, 13);
+            this.label19.TabIndex = 14;
+            this.label19.Text = "Путь для папки с результатами";
+            // 
+            // bt_ExportEachResultToExcel
+            // 
+            this.bt_ExportEachResultToExcel.Location = new System.Drawing.Point(795, 245);
+            this.bt_ExportEachResultToExcel.Name = "bt_ExportEachResultToExcel";
+            this.bt_ExportEachResultToExcel.Size = new System.Drawing.Size(75, 56);
+            this.bt_ExportEachResultToExcel.TabIndex = 16;
+            this.bt_ExportEachResultToExcel.Text = "bt_ExportEachResultToExcel";
+            this.bt_ExportEachResultToExcel.UseVisualStyleBackColor = true;
+            this.bt_ExportEachResultToExcel.Click += new System.EventHandler(this.bt_ExportEachResultToExcel_Click);
+            // 
+            // bt_SortArmAndServ
+            // 
+            this.bt_SortArmAndServ.Enabled = false;
+            this.bt_SortArmAndServ.Location = new System.Drawing.Point(795, 346);
+            this.bt_SortArmAndServ.Name = "bt_SortArmAndServ";
+            this.bt_SortArmAndServ.Size = new System.Drawing.Size(75, 56);
+            this.bt_SortArmAndServ.TabIndex = 16;
+            this.bt_SortArmAndServ.Text = "bt_SortArmAndServ";
+            this.bt_SortArmAndServ.UseVisualStyleBackColor = true;
+            this.bt_SortArmAndServ.Click += new System.EventHandler(this.bt_SortArmAndServ_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(895, 610);
+            this.Controls.Add(this.cmb_domain);
             this.Controls.Add(this.lb_Status);
             this.Controls.Add(this.lb_WorkingTime);
             this.Controls.Add(this.lb_TimeStop);
@@ -421,13 +516,20 @@
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.chb_ADFromFile);
             this.Controls.Add(this.bt_BrowseSCCMReport);
+            this.Controls.Add(this.bt_BrowseADReport);
+            this.Controls.Add(this.bt_BrowseSumReport);
             this.Controls.Add(this.bt_BrowseSEPReport);
             this.Controls.Add(this.tb_PathSCCMReport);
             this.Controls.Add(this.bt_BrowseKSCReport);
+            this.Controls.Add(this.tb_PathADReport);
+            this.Controls.Add(this.tb_PathSumReport);
             this.Controls.Add(this.tb_PathSEPReport);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.tb_PathKSCReport);
+            this.Controls.Add(this.label19);
             this.Controls.Add(this.label12);
+            this.Controls.Add(this.bt_SortArmAndServ);
+            this.Controls.Add(this.bt_ExportEachResultToExcel);
             this.Controls.Add(this.bt_ExportMainResultToExcel);
             this.Controls.Add(this.bt_GetAllHost);
             this.Controls.Add(this.bt_BrowseMPReport);
@@ -499,6 +601,14 @@
         private System.Windows.Forms.Label lb_TimeStop;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label lb_WorkingTime;
+        private System.Windows.Forms.TextBox tb_PathSumReport;
+        private System.Windows.Forms.Button bt_BrowseSumReport;
+        private System.Windows.Forms.TextBox tb_PathADReport;
+        private System.Windows.Forms.Button bt_BrowseADReport;
+        private System.Windows.Forms.ComboBox cmb_domain;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Button bt_ExportEachResultToExcel;
+        private System.Windows.Forms.Button bt_SortArmAndServ;
     }
 }
 
